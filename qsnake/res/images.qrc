@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/img">
+        <file alias="trending_up_black">img/baseline_trending_up_black_24dp.png</file>
+        <file alias="apple">img/apple.png</file>
+    </qresource>
+</RCC>

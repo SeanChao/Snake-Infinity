@@ -11,8 +11,8 @@ class Log {
 
    public:
     Log();
-    inline static void d(std::string &info);
-    static void d(char *);
+    static void d(const std::string &info);
+    // static void d(char *);
     ~Log();
 };
 

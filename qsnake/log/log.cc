@@ -1,4 +1,4 @@
-#include "Log.h"
+#include "log.h"
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -13,20 +13,21 @@ const std::string currentDateTime() {
 
     // convert now to string form
     std::string dt = ctime(&now);
-    dt.replace(dt.length()-1, 1, " \t");
+    dt.replace(0, 4, ""); // cut the weekday
+    dt.replace(dt.length()-1, 1, ""); // cut the \n
     return dt;
 }
 
-void Log::d(std::string &info) {
-    auto currentTime = std::chrono::system_clock::now();
-    logStream += currentDateTime() + info + '\n';
+void Log::d(const std::string &info) {
+    // auto currentTime = std::chrono::system_clock::now();
+    logStream += "[" + currentDateTime() + "] [debug]\t" + info + '\n';
     writeToFile();
 }
 
-void Log::d(char *info) {
-    logStream += currentDateTime() + info + '\n';
-    writeToFile();
-}
+// void Log::d(char *info) {
+//     logStream += "[" + currentDateTime() + "] \t"  + info + '\n';
+//     writeToFile();
+// }
 
 void Log::writeToFile() {
     std::ofstream fileOutPutStream("debug.log", std::ios_base::app);

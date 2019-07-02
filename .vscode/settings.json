@@ -1,0 +1,24 @@
+{
+    "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
+        "qapplication": "cpp",
+        "qtgui": "cpp",
+        "*.tcc": "cpp",
+        "fstream": "cpp",
+        "chrono": "cpp",
+        "iosfwd": "cpp",
+        "qtguidepends": "cpp",
+        "qmessagebox": "cpp",
+        "qmenu": "cpp",
+        "qpainter": "cpp"
+    },
+    "cSpell.words": [
+        "Qpainter",
+        "cppreference",
+        "qresource",
+        "qsnake",
+        "rasterwindow"
+    ]
+}
