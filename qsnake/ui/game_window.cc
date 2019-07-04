@@ -1,42 +1,50 @@
 #include "game_window.h"
-#include "../log/log.h"
 #include "../game/point.h"
+#include "../log/log.h"
 
 GameWindow::GameWindow() {
     setTitle(tr("Snake: Infinity"));
-    resize(800, 450);
-    update_timer_id = startTimer(1000);
-    x = 100;
-    y = 100;
+    resize(800, 800);
+    update_timer_id = startTimer(5000);  // 120fps
+    // x = 100;
+    // y = 100;
 }
 
 GameWindow::~GameWindow() {}
 
-void GameWindow::bindController(Controller *controller) { this->controller = controller; }
+void GameWindow::bindController(Controller *controller) {
+    this->controller = controller;
+}
 
-void GameWindow::bindSnake(Snake *snake) { this->snake = snake; }
-
+// void GameWindow::bindSnake(Snake *snake) { this->snake = snake; }
+int counter = 0;
 void GameWindow::timerEvent(QTimerEvent *event) {
     // if(event->timerId() == update_timer_id) {
     //     x+=5;
     //     y+=5;
     //     renderNow();
     // }
+    if (event->timerId() == update_timer_id) {
+        controller->getSnake()->move();  // TODO: change to indirect manupulate
+        renderNow();
+    }
 }
 
 void GameWindow::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Up)
-        y -= 5;
+        controller->setSnakeDirection(Snake::UP);
     if (event->key() == Qt::Key_Down)
-        y += 5;
+        controller->setSnakeDirection(Snake::DOWN);
     if (event->key() == Qt::Key_Right)
-        x += 5;
+        controller->setSnakeDirection(Snake::RIGHT);
     if (event->key() == Qt::Key_Left)
-        x -= 5;
+        controller->setSnakeDirection(Snake::LEFT);
+    // renderNow();
+}
 
-    // Log::d("x=" + std::to_string(x) + "\ty=" + std::to_string(y) + "\t on key
-    // pressed");
-    renderNow();
+void GameWindow::mousePressEvent(QMouseEvent *ev) {
+    Log::d("mouse clicked at " + std::to_string(ev->x()) + ", " +
+           std::to_string(ev->y()));
 }
 
 void GameWindow::render(QPainter *painter) {
@@ -63,16 +71,65 @@ void GameWindow::renderScene(QPainter *painter) {
 
     painter->restore();
 }
-
+int times = 0;
 void GameWindow::renderSnake(QPainter *painter) {
+    Log::d("GameWindow::renderSnake");
     painter->save();
     painter->setBrush(Qt::blue);
+    switch (times % 4) {
+        case 0:
+            break;
+        case 1:
+            painter->setBrush(Qt::red);
+            break;
+        case 2:
+            painter->setBrush(Qt::yellow);
+            break;
+        case 3:
+            painter->setBrush(Qt::green);
+            break;
+        case 4:
+            painter->setBrush(Qt::white);
+            break;
+    }
+    times++;
     // painter->drawRect(x, y, 20, 20);
     // Log::d("x=" + std::to_string(x) + "\ty=" + std::to_string(y));
-    Point *snake_vertex = snake->getBodyVertex();
-    int vertex_size = snake->getBodyVertexSize();
-    for(int i = 0; i < vertex_size; ++i) {
-        painter->drawRect(snake_vertex[i].getX(),snake_vertex[i].getY(), 20, 20);
+    Point *snake_vertex = controller->getSnake()->getBodyVertex();
+    int vertex_size = controller->getSnake()->getBodyVertexSize();
+    // paint the snake by connecting all the vertices
+    //debug:
+    for (int i = 0; i < vertex_size; i++) {
+        Log::d("snake_vertex[" + std::to_string(i) + "]\t(" + std::to_string(snake_vertex[i].getX())+","+ std::to_string(snake_vertex[i].getY())+")");
+    }
+
+    for (int i = 0; i < vertex_size - 1; ++i) {
+        // Log::d("snake_vertex[" + std::to_string(i) + "].getX()=" + std::to_string(snake_vertex[i].getX()));
+        // Log::d("snake_vertex[" + std::to_string(i + 1) + "].getX()=" + std::to_string(snake_vertex[i + 1].getX()));
+        // Log::d("snake_vertex[" + std::to_string(i) + "].getY()=" + std::to_string(snake_vertex[i].getY()));
+        // Log::d("snake_vertex[" + std::to_string(i + 1) + "].getY()=" + std::to_string(snake_vertex[i + 1].getY()));
+        for (int j = abs(snake_vertex[i].getX() - snake_vertex[i + 1].getX());
+             j > 0; j -= 20) {
+            int left_vertex_index =
+                (snake_vertex[i].getX() > snake_vertex[i + 1].getX()) ? i + 1
+                                                                      : i;
+            painter->drawRect(snake_vertex[left_vertex_index].getX() + j,
+                              snake_vertex[left_vertex_index].getY(), 20, 20);
+
+            // Log::d("renderSnake->drawRect at" +std::to_string(snake_vertex[i].getX() + j) + "," +std::to_string(snake_vertex[i].getY()) + ", 20, 20)");
+        }
+        for (int k = abs(snake_vertex[i].getY() - snake_vertex[i + 1].getY());
+             k > 0; k -= 20) {
+            int below_vertex_index =
+                (snake_vertex[i].getY() > snake_vertex[i + 1].getY()) ? i + 1
+                                                                      : i;
+            painter->drawRect(snake_vertex[below_vertex_index].getX(),
+                              snake_vertex[below_vertex_index].getY() + k, 20,
+                              20);
+
+            // Log::d("renderSnake->drawRect at" + std::to_string(snake_vertex[i].getX()) + "," +  std::to_string(snake_vertex[i].getY() + k) + ", 20, 20)");
+        }
     }
     painter->restore();
+    Log::d("GameWindow::renderSnake finished");
 }

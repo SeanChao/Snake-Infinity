@@ -8,14 +8,18 @@ class Snake {
     enum Direction { UP, DOWN, LEFT, RIGHT };
     Snake(/* args */);
     ~Snake();
-    void move(Direction direction);
+    void setDirection(Direction direction);
+    void move();
     void grow();
-    Point* getBodyVertex(); // return the array of all the vertex of the snake
-    int getBodyVertexSize();
+    Direction getDirection() const;
+    Point* getBodyVertex() const;   // return the array of all the vertex of the snake
+    int getBodyVertexSize() const;
     
    private:
+    int step;               // the step of every movement
+    Direction direction;    // the snake's current movement direction
     Point* body_vertex;     // an array to store all the vertex of the snake
-    int vertex_counter;     // the size of body_vertex
+    int vertex_size;        // the size of body_vertex
 };
 
 #endif  // SNAKE_H

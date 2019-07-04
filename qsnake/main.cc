@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     game_window.show();
 
     Controller controller;
+    game_window.bindController(&controller);
     
     Log::d("****** Application ended! ******");
     return application.exec();

@@ -2,13 +2,19 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include "../game/snake.h"
+#include "../log/log.h"
 
-class Controller: public QObject{
+class Controller : public QObject {
     Q_OBJECT
-    public:
+   public:
+    Controller();
+    Snake* getSnake();
+    void moveSnake();
+    void setSnakeDirection(Snake::Direction d) const;
 
-    private:
-
+   private:
+    Snake *snake;
 };
 
-#endif // CONTROLLER_H
+#endif  // CONTROLLER_H

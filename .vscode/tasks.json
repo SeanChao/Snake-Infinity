@@ -24,6 +24,16 @@
                 "${workspaceRoot}\\clean.cmd",
                 "debug"
             ]
+        },
+        {
+            "label": "run again",
+            "type": "shell",
+            "command": "cmd",
+            "args": [
+                "/c",
+                "${workspaceRoot}\\just-run.cmd",
+                "debug"
+            ]
         }
     ]
 }
