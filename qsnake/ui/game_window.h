@@ -18,10 +18,9 @@ class GameWindow : public RasterWindow {
     void mousePressEvent(QMouseEvent *ev) override;
     
    private:
-    // int x;
-    // int y;
     int update_timer_id;
     Controller *controller;
+    bool state;
     // Snake *snake;
 
     void render(QPainter *painter) override;

@@ -15,6 +15,5 @@ int main(int argc, char *argv[]) {
     Controller controller;
     game_window.bindController(&controller);
     
-    Log::d("****** Application ended! ******");
     return application.exec();
 }

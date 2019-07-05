@@ -5,9 +5,8 @@
 GameWindow::GameWindow() {
     setTitle(tr("Snake: Infinity"));
     resize(800, 800);
-    update_timer_id = startTimer(5000);  // 120fps
-    // x = 100;
-    // y = 100;
+    update_timer_id = startTimer(1000);
+    state = true;
 }
 
 GameWindow::~GameWindow() {}
@@ -17,14 +16,14 @@ void GameWindow::bindController(Controller *controller) {
 }
 
 // void GameWindow::bindSnake(Snake *snake) { this->snake = snake; }
-int counter = 0;
+// int counter = 0;
 void GameWindow::timerEvent(QTimerEvent *event) {
     // if(event->timerId() == update_timer_id) {
     //     x+=5;
     //     y+=5;
     //     renderNow();
     // }
-    if (event->timerId() == update_timer_id) {
+    if (state&&event->timerId() == update_timer_id) {
         controller->getSnake()->move();  // TODO: change to indirect manupulate
         renderNow();
     }
@@ -39,6 +38,8 @@ void GameWindow::keyPressEvent(QKeyEvent *event) {
         controller->setSnakeDirection(Snake::RIGHT);
     if (event->key() == Qt::Key_Left)
         controller->setSnakeDirection(Snake::LEFT);
+    if (event->key()==Qt::Key_Space)
+        state = !state;
     // renderNow();
 }
 
@@ -109,25 +110,22 @@ void GameWindow::renderSnake(QPainter *painter) {
         // Log::d("snake_vertex[" + std::to_string(i) + "].getY()=" + std::to_string(snake_vertex[i].getY()));
         // Log::d("snake_vertex[" + std::to_string(i + 1) + "].getY()=" + std::to_string(snake_vertex[i + 1].getY()));
         for (int j = abs(snake_vertex[i].getX() - snake_vertex[i + 1].getX());
-             j > 0; j -= 20) {
+             j >= 0; j -= 20) {
             int left_vertex_index =
                 (snake_vertex[i].getX() > snake_vertex[i + 1].getX()) ? i + 1
                                                                       : i;
             painter->drawRect(snake_vertex[left_vertex_index].getX() + j,
                               snake_vertex[left_vertex_index].getY(), 20, 20);
-
-            // Log::d("renderSnake->drawRect at" +std::to_string(snake_vertex[i].getX() + j) + "," +std::to_string(snake_vertex[i].getY()) + ", 20, 20)");
+            Log::d("renderSnake->drawRect at\t(" +std::to_string(snake_vertex[i].getX() + j) + "," +std::to_string(snake_vertex[i].getY()) + ", 20, 20)");
         }
         for (int k = abs(snake_vertex[i].getY() - snake_vertex[i + 1].getY());
-             k > 0; k -= 20) {
+             k >= 0; k -= 20) {
             int below_vertex_index =
-                (snake_vertex[i].getY() > snake_vertex[i + 1].getY()) ? i + 1
-                                                                      : i;
+                (snake_vertex[i].getY() > snake_vertex[i + 1].getY()) ? i
+                                                                      : i + 1;
             painter->drawRect(snake_vertex[below_vertex_index].getX(),
-                              snake_vertex[below_vertex_index].getY() + k, 20,
-                              20);
-
-            // Log::d("renderSnake->drawRect at" + std::to_string(snake_vertex[i].getX()) + "," +  std::to_string(snake_vertex[i].getY() + k) + ", 20, 20)");
+                              snake_vertex[below_vertex_index].getY() - k, 20, 20);
+            Log::d("renderSnake->drawRect at\t(" + std::to_string(snake_vertex[i].getX()) + "," +  std::to_string(snake_vertex[i].getY() - k) + ", 20, 20)");
         }
     }
     painter->restore();

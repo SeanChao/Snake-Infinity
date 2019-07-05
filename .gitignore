@@ -1,3 +1,4 @@
 .vscode/ipch
 *.exe
 build-qsnake-Desktop_Qt_5_12_3_MinGW_64_bit-Debug/
+qsnake/test.cc
