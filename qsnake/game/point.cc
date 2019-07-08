@@ -21,3 +21,8 @@ int Point::getY() const{
 void Point::setY(int y) {
     this->y = y;
 }
+
+bool Point::operator==(const Point &r) const {
+    // Log::d("Point:: == result:"+std::to_string((this->x == r.x) && (this->y == r.y)));
+    return (this->x == r.x) && (this->y == r.y);
+}

@@ -4,6 +4,7 @@
 #include "raster_window.h"
 #include "../core/controller.h"
 #include "../game/snake.h"
+#include "../game/point.h"
 
 class GameWindow : public RasterWindow {
    public:
@@ -19,16 +20,17 @@ class GameWindow : public RasterWindow {
     
    private:
     int update_timer_id;
+    int render_timer_id;
+    int snake_timer_id;
     Controller *controller;
     bool state;
     // Snake *snake;
 
     void render(QPainter *painter) override;
     void renderBackground(QPainter *painter);
-    void renderScene(QPainter *painter);
+    void renderLand(QPainter *painter);
     void renderSnake(QPainter *painter);
-    void renderSnack(QPainter *painter);
-
+    void renderFood(QPainter *painter);
 };
 
 #endif  // GAME_WINDOW_H

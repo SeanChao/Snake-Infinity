@@ -29,6 +29,7 @@ SOURCES += \
         core/controller.cc \
         ui/raster_window.cc \
         ui/game_window.cc \
+        game/food.cc \
         game/snake.cc \
         game/point.cc \
         log/log.cc
@@ -37,6 +38,7 @@ HEADERS += \
         core/controller.h \
         ui/raster_window.h \
         ui/game_window.h \
+        game/food.h \
         game/snake.h \
         game/point.h \
         log/log.h

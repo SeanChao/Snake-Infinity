@@ -14,6 +14,6 @@ int main(int argc, char *argv[]) {
 
     Controller controller;
     game_window.bindController(&controller);
-    
+    QObject::connect(&controller, Controller::updateSnake, &game_window, GameWindow::renderNow);
     return application.exec();
 }

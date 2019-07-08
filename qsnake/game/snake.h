@@ -14,12 +14,15 @@ class Snake {
     Direction getDirection() const;
     Point* getBodyVertex() const;   // return the array of all the vertex of the snake
     int getBodyVertexSize() const;
+    bool getDigestFood() const;
     
    private:
     int step;               // the step of every movement
     Direction direction;    // the snake's current movement direction
     Point* body_vertex;     // an array to store all the vertex of the snake
     int vertex_size;        // the size of body_vertex
+    bool digestFood;        // whether to handle the food eaten just now
+    Point sloughed_tail;    // the tail of last move
 };
 
 #endif  // SNAKE_H

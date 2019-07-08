@@ -1,5 +1,8 @@
 #ifndef POINT_H
 #define POINT_H
+
+#include "../log/log.h"
+
 class Point {
    private:
     // the cordinate of the Point
@@ -15,5 +18,7 @@ class Point {
     void setX(int x);
     int getY() const;
     void setY(int y);
+
+    bool operator==(const Point &r) const;
 };
 #endif  // POINT_H
