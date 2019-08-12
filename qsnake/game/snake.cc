@@ -2,15 +2,17 @@
 #include "../log/log.h"
 
 Snake::Snake() {
-    vertex_size = 4;
+    vertex_size = 1;
     body_vertex = new Point[vertex_size];
     body_vertex[0] = Point(420, 300);
-    body_vertex[1] = Point(300, 300);
-    body_vertex[2] = Point(300, 100);
-    body_vertex[3] = Point(40, 100);
+    // body_vertex[1] = Point(300, 300);
+    // body_vertex[2] = Point(300, 100);
+    // body_vertex[3] = Point(40, 100);
+    sloughed_tail = body_vertex[0];
     direction = RIGHT;
     step = 20;
     digestFood = false;
+    score = 0;
 }
 
 Snake::~Snake() {
@@ -37,6 +39,7 @@ void Snake::setDirection(Direction d) {
 }
 
 void Snake::move() {
+    sloughed_tail = body_vertex[vertex_size - 1];   // backup last tail
     // update the position of the head
     switch (direction) {
         case UP:
@@ -56,9 +59,10 @@ void Snake::move() {
     }
     // update the position of the tail
     // special case: after eat food
-    if (!digestFood) {
-        Log::d("Snake::move no need to digest food");
-        sloughed_tail = body_vertex[vertex_size-1];
+    // if (!digestFood) {
+        // Log::d("Snake::move no need to digest food");
+        
+        if(vertex_size==1) return;
         int delta_x = body_vertex[vertex_size - 1].getX() - body_vertex[vertex_size - 2].getX();
         int delta_y = body_vertex[vertex_size - 1].getY() - body_vertex[vertex_size - 2].getY();
         // Log::d("Snake::move\tdelta_x=" + std::to_string(delta_x) + "\tdelta_y=" + std::to_string(delta_y));
@@ -76,9 +80,9 @@ void Snake::move() {
             // Log::d("tail meets its previous vertex");
             vertex_size--;
         }
-    }else{
-        digestFood = false;
-    }
+    // } else {
+    //     digestFood = false;
+    // }
 }
 
 void Snake::grow() {
@@ -88,14 +92,15 @@ void Snake::grow() {
     // the right strategy is hold the position of its tail.
     // but according to the hierarchy, i need to implement this in another way
     // after collide with food copy its original tail as if it didn't move:
-    Log::d("Snake::grow(), direction");
+    // Log::d("Snake::grow()");
+    Log::d("Snake::grow()\t sloughed_tail=("+std::to_string(sloughed_tail.getX())+" ," + std::to_string(sloughed_tail.getY())+")");
     // copy the tail (last time)
-    Point *tmp = body_vertex;
+    Point* tmp = body_vertex;
     body_vertex = new Point[++vertex_size];
     for (int i = 0; i < vertex_size; i++) {
         body_vertex[i] = tmp[i];
     }
-    body_vertex[vertex_size-1] = sloughed_tail;
+    body_vertex[vertex_size - 1] = sloughed_tail;
 }
 
 Snake::Direction Snake::getDirection() const { return direction; }
@@ -106,4 +111,35 @@ int Snake::getBodyVertexSize() const { return vertex_size; }
 
 bool Snake::getDigestFood() const {
     return digestFood;
+}
+
+bool Snake::inBody(const Point& p) {
+    int x = p.getX();
+    int y = p.getY();
+    bool in = false;
+    for (int i = 0; i < vertex_size - 1; i++) {
+        Point a = body_vertex[i];
+        Point b = body_vertex[i + 1];
+        if (a.getX() == b.getX() && x == a.getX()) {
+            bool flag = (a.getY() < b.getY()) ? true : false;
+            if (flag && a.getY() <= y && y <= b.getY()) {
+                Log::d("inBody v|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                in  = true;
+            } else if (!flag && a.getY() >= y && y >= b.getY()) {
+                Log::d("inBody v|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                in  = true;
+            }
+        } else if (a.getY() == b.getY() && y == a.getY()) {
+            bool flag = (a.getX() < b.getX()) ? true : false;
+            if (flag && a.getX() <= x && x <= b.getX()) {
+                Log::d("inBody h|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                in  = true;
+            } else if (!flag && a.getX() >= x && x >= b.getX()) {
+                Log::d("inBody h|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                in  = true;
+            }
+        }
+    }
+    Log::d("inPlace returned " + std::to_string(in));
+    return in;
 }

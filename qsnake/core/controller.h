@@ -23,14 +23,17 @@ class Controller : public QObject {
     bool foodExists() const;
     Point getFoodPosition() const;
 
-    Point collideDetection();  // return the point that something collides
-   
+    void collideDetection();  // return the point that something collides
+    int getScore() const;
+    void setScore(int new_score);
+
    signals:
-    void updateSnake(const QString &type);    // use signal slot to actively update gamewindow
+    void updateSnake(const QString &type);  // use signal slot to actively update gamewindow
 
    private:
     Snake *snake;
     Food *food;
+    int score;
 };
 
 #endif  // CONTROLLER_H

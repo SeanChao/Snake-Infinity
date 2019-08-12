@@ -2,6 +2,7 @@
 #define RASTERWINDOW_H
 
 #include <QtGui>
+#include <QLabel>
 
 class RasterWindow : public QWindow
 {

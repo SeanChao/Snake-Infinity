@@ -4,13 +4,11 @@
 #include "log/log.h"
 #include "raster_window.h"
 
-//! [1]
 RasterWindow::RasterWindow(QWindow *parent)
     : QWindow(parent), m_backingStore(new QBackingStore(this)) {
-    setGeometry(300, 300, 800, 450);
+    setGeometry(200, 200, 800, 800);
     Log::d("RasterWindow is built");
 }
-//! [1]
 
 //! [7]
 bool RasterWindow::event(QEvent *event) {
@@ -57,6 +55,7 @@ void RasterWindow::renderNow() {
 }
 
 void RasterWindow::render(QPainter *painter) {
+    painter->save();
     // painter->drawText(QRectF(0, 0, width(), height()), Qt::AlignCenter, QStringLiteral("QWindow"));
     Log::d("RasterWindow::render(QPainter *painter) is called");
 }
