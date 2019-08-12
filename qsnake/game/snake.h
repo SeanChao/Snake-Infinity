@@ -20,6 +20,7 @@ class Snake {
    private:
     int step;               // the step of every movement
     Direction direction;    // the snake's current movement direction
+    Direction buffered_direction;
     Point* body_vertex;     // an array to store all the vertex of the snake
     int vertex_size;        // the size of body_vertex
     bool digestFood;        // whether to handle the food eaten just now

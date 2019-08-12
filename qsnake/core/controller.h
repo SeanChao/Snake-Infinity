@@ -26,7 +26,8 @@ class Controller : public QObject {
     void collideDetection();  // return the point that something collides
     int getScore() const;
     void setScore(int new_score);
-
+    void setCellNumber(int n);
+    
    signals:
     void updateSnake(const QString &type);  // use signal slot to actively update gamewindow
 
@@ -34,6 +35,7 @@ class Controller : public QObject {
     Snake *snake;
     Food *food;
     int score;
+    int cell_number;
 };
 
 #endif  // CONTROLLER_H

@@ -2,6 +2,7 @@
 
 Controller::Controller() {
     snake = new Snake;
+    cell_number = 1;
     generateFood();
     score = 0;
 }
@@ -42,14 +43,14 @@ void Controller::collideDetection() {
         Point a = snake->getBodyVertex()[i];
         Point b = snake->getBodyVertex()[i + 1];
         if (a.getX() == b.getX() && head_position.getX() == a.getX()) {
-            bool flag = (a.getY() < b.getY()) ? true : false;
+            bool flag = a.getY() < b.getY();
             if (flag && a.getY() <= head_position.getY() && head_position.getY() <= b.getY()) {
                 Log::d("self collide v|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
             } else if (!flag && a.getY() >= head_position.getY() && head_position.getY() >= b.getY()) {
                 Log::d("self collide v|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
             }
         } else if (a.getY() == b.getY() && head_position.getY() == a.getY()) {
-            bool flag = (a.getX() < b.getX()) ? true : false;
+            bool flag = a.getX() < b.getX();
             if (flag && a.getX() <= head_position.getX() && head_position.getX() <= b.getX()) {
                 Log::d("self collide h|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
             } else if (!flag && a.getX() >= head_position.getX() && head_position.getX() >= b.getX()) {
@@ -61,7 +62,7 @@ void Controller::collideDetection() {
     // currently the wall is from
     // UP: (0,0) to (800, 0) DOWN: (0, 800) to (800, 800)
     // LEFT: (0, 0) to (0, 800) RIGHT(800, 0) to (800, 800)
-    if (head_position.getX() < 0 || head_position.getX() >= 800 || head_position.getY() < 0 || head_position.getY() >= 800) {
+    if (head_position.getX() < 0 || head_position.getX() >= cell_number || head_position.getY() < 0 || head_position.getY() >= cell_number) {
         Log::d("Hit the wall!!!");
     }
 
@@ -89,14 +90,11 @@ void Controller::generateFood() {
     int point[2];
     do {
         for (int i = 0; i < 2; i++) {
-            int p;
-            do {
-                p = rand() % 800;
-            } while (p % 20 != 0);
-            point[i] = p;
+            point[i] = rand() % cell_number;
         }
         food = new Food(Point(point[0], point[1]));
     } while (snake->inBody(Point(point[0], point[1])));
+    Log::d("Controller::generateFood() cell_number:" + std::to_string(cell_number));
 }
 
 bool Controller::foodHidden() const {
@@ -115,4 +113,9 @@ int Controller::getScore() const {return score;};
 
 void Controller::setScore(int new_score) {
     score = new_score;
+}
+
+void Controller::setCellNumber(int n) {
+    cell_number = n;
+    generateFood();
 }

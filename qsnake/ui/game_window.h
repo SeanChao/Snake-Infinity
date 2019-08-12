@@ -24,10 +24,12 @@ class GameWindow : public RasterWindow {
     int update_timer_id;
     int render_timer_id;
     int snake_timer_id;
-
     Controller *controller;
     bool state;
-    // Snake *snake;
+    int cell;           // the length of a cell in grassland
+    int cell_number;    // the number of cells
+    int land_x;         // the left-top x cordinate of grassland
+    int land_y;
 
     void render(QPainter *painter) override;
     void renderBackground(QPainter *painter);
