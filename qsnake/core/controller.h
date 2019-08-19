@@ -27,6 +27,8 @@ class Controller : public QObject {
     int getScore() const;
     void setScore(int new_score);
     void setCellNumber(int n);
+
+    void restart();
     
    signals:
     void updateSnake(const QString &type);  // use signal slot to actively update gamewindow

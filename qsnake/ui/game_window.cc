@@ -1,6 +1,7 @@
 #include "game_window.h"
 #include "../game/point.h"
 #include "../log/log.h"
+//#include "qtmaterialflatbutton.h"
 
 GameWindow::GameWindow() {
     setTitle(tr("Snake: Infinity"));
@@ -11,6 +12,8 @@ GameWindow::GameWindow() {
     state = true;
     cell = 30;
     cell_number = height() * 0.8 / cell;
+//    QtMaterialFlatButton *btn = new QtMaterialFlatButton("test");
+    
 }
 
 GameWindow::~GameWindow() {}

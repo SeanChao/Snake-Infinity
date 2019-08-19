@@ -17,7 +17,8 @@ void Controller::updateGame() {
         Log::d("snake_vertex[" + std::to_string(i) + "]\t(" + std::to_string(snake->getBodyVertex()[i].getX()) + "," + std::to_string(snake->getBodyVertex()[i].getY()) + ")");
     }
     // food position
-    Log::d("food @("+std::to_string(food->getPosition().getX())+", " + std::to_string(food->getPosition().getY())+")");
+    Log::d("food @(" + std::to_string(food->getPosition().getX()) + ", " + std::to_string(food->getPosition().getY()) + ")");
+    Log::d("score: " + std::to_string(score));
 }
 
 void Controller::moveSnake() {
@@ -25,7 +26,6 @@ void Controller::moveSnake() {
 }
 
 void Controller::collideDetection() {
-    Log::d("Controller::collideDetection");
     Point head_position = snake->getBodyVertex()[0];
     // check snake and food
     Point food_position = food->getPosition();
@@ -63,10 +63,9 @@ void Controller::collideDetection() {
     // UP: (0,0) to (800, 0) DOWN: (0, 800) to (800, 800)
     // LEFT: (0, 0) to (0, 800) RIGHT(800, 0) to (800, 800)
     if (head_position.getX() < 0 || head_position.getX() >= cell_number || head_position.getY() < 0 || head_position.getY() >= cell_number) {
-        Log::d("Hit the wall!!!");
+        Log::d("Hit the wall!!! The game restarted.");
+        // restart();
     }
-
-    Log::d("Controller::collideDetection finishes");
 }
 
 Snake* Controller::getSnake() {
@@ -109,7 +108,7 @@ Point Controller::getFoodPosition() const {
     return food->getPosition();
 }
 
-int Controller::getScore() const {return score;};
+int Controller::getScore() const { return score; };
 
 void Controller::setScore(int new_score) {
     score = new_score;
@@ -118,4 +117,11 @@ void Controller::setScore(int new_score) {
 void Controller::setCellNumber(int n) {
     cell_number = n;
     generateFood();
+}
+
+void Controller::restart(){
+    Snake *old = snake;
+    snake = new Snake;
+    score = 0;
+    delete old;
 }

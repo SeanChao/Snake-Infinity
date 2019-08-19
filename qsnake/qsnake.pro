@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = qsnake
 TEMPLATE = app
+SUBDIRS = ui/components
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -27,21 +28,29 @@ CONFIG += c++11
 SOURCES += \
         main.cc \
         core/controller.cc \
+        ui/game_widget.cc \
+        ui/main_window.cc \
         ui/raster_window.cc \
         ui/game_window.cc \
         game/food.cc \
         game/snake.cc \
         game/point.cc \
-        log/log.cc
+        log/log.cc \
+        ui/welcome_widget.cc
+
 
 HEADERS += \
         core/controller.h \
+        ui/game_widget.h \
+        ui/main_window.h \
         ui/raster_window.h \
         ui/game_window.h \
         game/food.h \
         game/snake.h \
         game/point.h \
-        log/log.h
+        log/log.h \
+        ui/welcome_widget.h
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
