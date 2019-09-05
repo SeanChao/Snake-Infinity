@@ -15,6 +15,7 @@ class GameWidget : public QWidget {
 
    public slots:
     void render();
+    void changeGameState();
 
    protected:
     void paintEvent(QPaintEvent *event);

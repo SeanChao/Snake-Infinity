@@ -15,7 +15,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     setWindowTitle(tr("Snake: Infinity"));
     setFocusPolicy(Qt::StrongFocus);  // enable keyboard press and click
 
-    state = true;
+    state = false;
     cell = 30;
     cell_number = height() * 0.8 / cell;
 
@@ -23,11 +23,11 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, QOverload<>::of(&GameWidget::update));
-    timer->start(1000/30.0);
+    timer->start(1000 / 30.0);
     Log::d("GameWidget is built");
 }
 
-void GameWidget::paintEvent(QPaintEvent *event) {
+void GameWidget::paintEvent(QPaintEvent *) {
     // Log::d("PaintEvent is called");
     QPainter *painter = new QPainter(this);
     // painter->setBrush(Qt::green);
@@ -44,7 +44,6 @@ void GameWidget::timerEvent(QTimerEvent *event) {
     if (state && event->timerId() == update_timer_id) {
         controller->updateGame();
     }
-    
 }
 
 void GameWidget::render() {
@@ -62,6 +61,15 @@ void GameWidget::render() {
 void GameWidget::bindController(Controller *controller) {
     this->controller = controller;
     controller->setCellNumber(cell_number);
+}
+
+/**
+ * stateId: explanation
+ * 0: start the game
+ */
+void GameWidget::changeGameState() {
+    // TODO: rename the function
+    state = true;
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {
@@ -135,7 +143,6 @@ void GameWidget::renderLand(QPainter *painter) {
 
 int call_times = 0;
 void GameWidget::renderSnake(QPainter *painter) {
-    // Log::d("GameWidget::renderSnake");
     painter->save();
     painter->setBrush(Qt::blue);
     switch (call_times % 4) {
@@ -155,10 +162,8 @@ void GameWidget::renderSnake(QPainter *painter) {
             break;
     }
     call_times++;
-    // painter->drawRect(x, y, 20, 20);
-    // Log::d("x=" + std::to_string(x) + "\ty=" + std::to_string(y));
-    Point *snake_vertex = controller->getSnake()->getBodyVertex();  // TODO: change to indirect visit
-    int vertex_size = controller->getSnake()->getBodyVertexSize();
+    Point *snake_vertex = controller->getSnakeVertices(0);  // TODO: change to indirect visit
+    int vertex_size = controller->getSnakeVerticesSize(0);
     // paint the snake by connecting all the vertices
     //debug:
     // for (int i = 0; i < vertex_size; i++) {
@@ -180,7 +185,6 @@ void GameWidget::renderSnake(QPainter *painter) {
                                                                           : i;
                 painter->drawRect(land_x + cell * snake_vertex[left_vertex_index].getX() + j * cell,
                                   land_y + cell * snake_vertex[left_vertex_index].getY(), cell, cell);
-                // Log::d("renderSnake->drawRect at\t(" +std::to_string(snake_vertex[i].getX() + j) + "," +std::to_string(snake_vertex[i].getY()) + ", 20, 20)");
             }
             for (int k = abs(snake_vertex[i].getY() - snake_vertex[i + 1].getY());
                  k >= 0; k -= 1) {
@@ -189,12 +193,10 @@ void GameWidget::renderSnake(QPainter *painter) {
                                                                           : i + 1;
                 painter->drawRect(land_x + cell * snake_vertex[below_vertex_index].getX(),
                                   land_y + cell * snake_vertex[below_vertex_index].getY() - k * cell, cell, cell);
-                // Log::d("renderSnake->drawRect at\t(" + std::to_string(snake_vertex[i].getX()) + "," +  std::to_string(snake_vertex[i].getY() - k) + ", 20, 20)");
             }
         }
     }
     painter->restore();
-    // Log::d("GameWidget::renderSnake finished");
 }
 
 void GameWidget::renderFood(QPainter *painter) {
@@ -207,6 +209,5 @@ void GameWidget::renderFood(QPainter *painter) {
     painter->restore();
 }
 
-void GameWidget::restart(){
-
+void GameWidget::restart() {
 }

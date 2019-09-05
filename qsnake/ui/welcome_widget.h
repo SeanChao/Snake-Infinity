@@ -12,12 +12,9 @@ public:
     void setGameWindow(GameWindow *game_window);
     
 signals:
-
+    void btnNormalPressed();
+    
 public slots:
-
-private:
-    void startGame();
-    GameWindow *game_window;
 };
 
 #endif // WELCOME_WIDGET_H

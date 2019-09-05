@@ -134,8 +134,8 @@ void GameWindow::renderSnake(QPainter *painter) {
     times++;
     // painter->drawRect(x, y, 20, 20);
     // Log::d("x=" + std::to_string(x) + "\ty=" + std::to_string(y));
-    Point *snake_vertex = controller->getSnake()->getBodyVertex();  // TODO: change to indirect visit
-    int vertex_size = controller->getSnake()->getBodyVertexSize();
+    Point *snake_vertex = controller->getSnakeVertices();  // TODO: change to indirect visit
+    int vertex_size = controller->getSnakeVerticesSize();
     // paint the snake by connecting all the vertices
     //debug:
     // for (int i = 0; i < vertex_size; i++) {

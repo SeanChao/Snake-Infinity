@@ -2,6 +2,8 @@
 #define MAIN_WINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
+#include "../core/controller.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -11,12 +13,14 @@ class MainWindow : public QMainWindow {
    signals:
 
    public slots:
-    // void changeWidget();
-    
+    void btnNormalPressed();
+
    private:
-   void createActions();
-   void createMenus();
-   QAction *action_new_game;
+    Controller *controller;
+    void createActions();
+    void createMenus();
+    QStackedWidget *widget_stack;
+    QAction *action_new_game;
 };
 
 #endif  // MAIN_WINDOW_H

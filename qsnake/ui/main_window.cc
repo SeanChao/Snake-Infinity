@@ -20,15 +20,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // btn->setFixedWidth(200);
     // btn->setFixedHeight(100);
 
-    WelcomeWidget welcome_widget;
-
+    WelcomeWidget *welcome_widget = new WelcomeWidget;
     GameWidget *game_widget = new GameWidget;
-    Controller *controller = new Controller;
+    controller = new Controller;
     game_widget->bindController(controller);
     QObject::connect(controller, &Controller::updateSnake, game_widget, QOverload<>::of(&GameWidget::update));
-    Log::d("connect succeeded");
-    setCentralWidget(game_widget);
-    Log::d("GameWidget is set as central Widget");
+
+    widget_stack = new QStackedWidget(this);
+    widget_stack->addWidget(welcome_widget);
+    widget_stack->addWidget(game_widget);
+    
+    connect(welcome_widget, SIGNAL(btnNormalPressed()), this, SLOT(btnNormalPressed()));
+    connect(welcome_widget, WelcomeWidget::btnNormalPressed, game_widget, GameWidget::changeGameState);
+    setCentralWidget(widget_stack);
+    // setCentralWidget(game_widget);
+}
+
+void MainWindow::btnNormalPressed() {
+    Log::d("button [normal mode] is pressed");
+    widget_stack->setCurrentIndex(1);
 }
 
 void MainWindow::createActions() {

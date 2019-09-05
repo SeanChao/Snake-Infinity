@@ -31,7 +31,6 @@ SOURCES += \
         ui/game_widget.cc \
         ui/main_window.cc \
         ui/raster_window.cc \
-        ui/game_window.cc \
         game/food.cc \
         game/snake.cc \
         game/point.cc \
@@ -44,7 +43,6 @@ HEADERS += \
         ui/game_widget.h \
         ui/main_window.h \
         ui/raster_window.h \
-        ui/game_window.h \
         game/food.h \
         game/snake.h \
         game/point.h \

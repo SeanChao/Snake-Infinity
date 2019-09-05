@@ -29,6 +29,7 @@ void Snake::setDirection(Direction d) {
     if (direction + d == 5)
         return;  // as above, LEFT/RIGHT
     buffered_direction = d;
+    Log::d("snake direction changed to"+std::to_string(d));
 }
 
 void Snake::move() {

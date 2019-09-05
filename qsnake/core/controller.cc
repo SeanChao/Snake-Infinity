@@ -1,7 +1,17 @@
 #include "controller.h"
 
-Controller::Controller() {
-    snake = new Snake;
+/**
+ * This is the controller of the game.
+ * The controller works as router to transfer commands from GameWidget
+ * to associating with snake, food, etc and 
+ * convey properties of game elements to the GameWidget. 
+ */
+Controller::Controller(int player) : mode(player) {
+    // snake = new Snake;
+    snakeList = new Snake*[player];
+    for (int i = 0; i < player; i++) {
+        snakeList[i] = new Snake;
+    }
     cell_number = 1;
     generateFood();
     score = 0;
@@ -10,11 +20,16 @@ Controller::Controller() {
 void Controller::updateGame() {
     Log::d("----------------------------------------");
     moveSnake();
-    collideDetection();
+    for (int i = 0; i < mode; i++) {
+        collideDetection(i);
+    }
     // debug:
     // snake vertices
-    for (int i = 0; i < snake->getBodyVertexSize(); i++) {
-        Log::d("snake_vertex[" + std::to_string(i) + "]\t(" + std::to_string(snake->getBodyVertex()[i].getX()) + "," + std::to_string(snake->getBodyVertex()[i].getY()) + ")");
+    for (int snake_index = 0; snake_index < mode; snake_index++) {
+        Snake* snake = snakeList[snake_index];
+        for (int i = 0; i < snake->getBodyVertexSize(); i++) {
+            Log::d("snake_vertex[" + std::to_string(i) + "]\t(" + std::to_string(snake->getBodyVertex()[i].getX()) + "," + std::to_string(snake->getBodyVertex()[i].getY()) + ")");
+        }
     }
     // food position
     Log::d("food @(" + std::to_string(food->getPosition().getX()) + ", " + std::to_string(food->getPosition().getY()) + ")");
@@ -22,11 +37,13 @@ void Controller::updateGame() {
 }
 
 void Controller::moveSnake() {
-    snake->move();
+    for (int snake_index = 0; snake_index < mode; snake_index++) {
+        snakeList[snake_index]->move();
+    }
 }
 
-void Controller::collideDetection() {
-    Point head_position = snake->getBodyVertex()[0];
+void Controller::collideDetection(int index) {
+    Point head_position = snakeList[index]->getBodyVertex()[0];
     // check snake and food
     Point food_position = food->getPosition();
     if (head_position == food_position) {
@@ -39,9 +56,9 @@ void Controller::collideDetection() {
     // for (int i = 0; i < snake->getBodyVertexSize(); i++) {
     //     Log::d("snake_vertex[" + std::to_string(i) + "]\t(" + std::to_string(snake->getBodyVertex()[i].getX()) + "," + std::to_string(snake->getBodyVertex()[i].getY()) + ")");
     // }
-    for (int i = 1; i < snake->getBodyVertexSize() - 1; i++) {
-        Point a = snake->getBodyVertex()[i];
-        Point b = snake->getBodyVertex()[i + 1];
+    for (int i = 1; i < snakeList[index]->getBodyVertexSize() - 1; i++) {
+        Point a = snakeList[index]->getBodyVertex()[i];
+        Point b = snakeList[index]->getBodyVertex()[i + 1];
         if (a.getX() == b.getX() && head_position.getX() == a.getX()) {
             bool flag = a.getY() < b.getY();
             if (flag && a.getY() <= head_position.getY() && head_position.getY() <= b.getY()) {
@@ -68,23 +85,27 @@ void Controller::collideDetection() {
     }
 }
 
-Snake* Controller::getSnake() {
-    return snake;
+void Controller::setSnakeDirection(Snake::Direction d, int index) const {
+    snakeList[index]->setDirection(d);
+    Log::d("Controller::setSnakeDirection\tget direction: " + std::to_string(d));
 }
 
-void Controller::setSnakeDirection(Snake::Direction d) const {
-    snake->setDirection(d);
-    Log::d("Controller::setSnakeDirection\tDirection changed to" + std::to_string(d));
+Point* Controller::getSnakeVertices(int index) const {
+    return snakeList[index]->getBodyVertex();
 }
 
-void Controller::eatFood() {
+int Controller::getSnakeVerticesSize(int index) const {
+    return snakeList[index]->getBodyVertexSize();
+}
+
+void Controller::eatFood(int index) {
     Log::d("Controller::eatFood()");
-    snake->grow();
+    snakeList[index]->grow();
     emit updateSnake(QString("SIGNAL_EAT_FOOD"));
     score += 10;
 }
 
-void Controller::generateFood() {
+void Controller::generateFood(int index) {
     srand(time(NULL));
     int point[2];
     do {
@@ -92,7 +113,7 @@ void Controller::generateFood() {
             point[i] = rand() % cell_number;
         }
         food = new Food(Point(point[0], point[1]));
-    } while (snake->inBody(Point(point[0], point[1])));
+    } while (snakeList[index]->inBody(Point(point[0], point[1])));
     Log::d("Controller::generateFood() cell_number:" + std::to_string(cell_number));
 }
 
@@ -119,9 +140,11 @@ void Controller::setCellNumber(int n) {
     generateFood();
 }
 
-void Controller::restart(){
-    Snake *old = snake;
-    snake = new Snake;
-    score = 0;
-    delete old;
+void Controller::restart() {
+    for (int i = 0; i < mode; i++) {
+        Snake* old = snakeList[i];
+        snakeList[i] = new Snake;
+        score = 0;
+        delete old;
+    }
 }
