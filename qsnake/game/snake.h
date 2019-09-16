@@ -6,7 +6,8 @@
 class Snake {
    public:
     enum Direction { UP, DOWN, LEFT, RIGHT };
-    Snake(/* args */);
+    Snake();
+    Snake(Point* point);
     ~Snake();
     void setDirection(Direction direction);
     void move();
@@ -16,6 +17,9 @@ class Snake {
     int getBodyVertexSize() const;
     bool getDigestFood() const;
     bool inBody(const Point &p);
+
+    // AI part (beta)
+    void setHamiltonianCycle();
 
    private:
     int step;               // the step of every movement

@@ -3,9 +3,10 @@
 #include "food.h"
 
 Food::Food() {
+    food_type = FoodTypes::Normal;
 }
 
-Food::Food(Point position) {
+Food::Food(Point position):Food() {
     this->position = position;
     hidden = false;
 }
@@ -24,4 +25,8 @@ void Food::setHidden(bool hidden) {
 
 Point Food::getPosition() const{
     return position;
+}
+
+Food::FoodType Food::getFoodType() const{
+    return food_type;
 }

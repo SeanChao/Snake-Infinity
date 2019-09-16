@@ -16,6 +16,13 @@ Snake::Snake() {
     score = 0;
 }
 
+/**
+ * generate the snake at the specified point
+ */
+Snake::Snake(Point* point): Snake() {
+    body_vertex[0] = *point;
+}
+
 Snake::~Snake() {
     // TODO:
 }
@@ -66,9 +73,6 @@ void Snake::move() {
     }
     // update the position of the tail
     // special case: after eat food
-    // if (!digestFood) {
-    // Log::d("Snake::move no need to digest food");
-
     if (vertex_size == 1)
         return;
     int delta_x = body_vertex[vertex_size - 1].getX() - body_vertex[vertex_size - 2].getX();
@@ -88,9 +92,6 @@ void Snake::move() {
         // Log::d("tail meets its previous vertex");
         vertex_size--;
     }
-    // } else {
-    //     digestFood = false;
-    // }
 }
 
 void Snake::grow() {

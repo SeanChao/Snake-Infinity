@@ -10,7 +10,7 @@
 class Controller : public QObject {
     Q_OBJECT
    public:
-    Controller(int player = 1);
+    Controller(int player = 1, int cell_number = 1);
     void updateGame();
     // Snake *getSnake();
     void moveSnake();
@@ -24,23 +24,29 @@ class Controller : public QObject {
     bool foodExists() const;
     Point getFoodPosition() const;
 
-    void collideDetection(int index = 0);  // return the point that something collides
+    void collideDetection(
+        int index = 0);  // return the point that something collides
     int getScore() const;
+    int getSnakeNumber() const;
     void setScore(int new_score);
     void setCellNumber(int n);
+    void setPlayer(int player);
 
     void restart();
 
    signals:
-    void updateSnake(const QString &type);  // use signal slot to actively update gamewindow
+    void updateSnake(
+        const QString &type);  // use signal slot to actively update gamewindow
+    void changeSpeed(int interval);
+    void scaleSpeed(int ratio);
 
    private:
     // Snake *snake;
     Snake **snakeList;  // an array to store Snake*
     Food *food;
     int score;
-    int cell_number;
-    int mode;  // the number of players
+    int cell_number;  // the number of cells in the grassland
+    int mode;         // the number of players
 };
 
 #endif  // CONTROLLER_H

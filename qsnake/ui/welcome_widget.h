@@ -12,9 +12,14 @@ public:
     void setGameWindow(GameWindow *game_window);
     
 signals:
-    void btnNormalPressed();
+    void btnPressed(int id);
+    void btnMultiplayerPressed();
+    void btnStartPressed(int id);
     
 public slots:
+
+private slots:
+    void buttonPressed(int id);
 };
 
 #endif // WELCOME_WIDGET_H
