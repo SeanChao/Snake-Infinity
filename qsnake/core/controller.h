@@ -26,6 +26,7 @@ class Controller : public QObject {
 
     void collideDetection(
         int index = 0);  // return the point that something collides
+    Food::FoodType getFoodType() const;
     int getScore() const;
     int getSnakeNumber() const;
     void setScore(int new_score);
@@ -38,7 +39,7 @@ class Controller : public QObject {
     void updateSnake(
         const QString &type);  // use signal slot to actively update gamewindow
     void changeSpeed(int interval);
-    void scaleSpeed(int ratio);
+    void scaleSpeed(double ratio);
 
    private:
     // Snake *snake;

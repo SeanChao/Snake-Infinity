@@ -19,10 +19,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     widget_stack->addWidget(welcome_widget);
     widget_stack->addWidget(game_widget);
 
-    // initialize controller
-    // controller = new Controller(1, game_widget->getCellNumber());   //
-    // initialize the player number to be 1
-
     // make game ui update
     connect(welcome_widget, WelcomeWidget::btnPressed, game_widget,
             GameWidget::changeGameState);

@@ -1,11 +1,11 @@
 #include "game_widget.h"
+#include <QDebug>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QTimer>
-#include <QDebug>
 #include "../game/point.h"
 #include "../log/log.h"
 
@@ -30,7 +30,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this,
             QOverload<>::of(&GameWidget::update));
-    timer->start(1000 / 30.0);
+    timer->start(1000 / 10.0);  // framerate
     Log::d("GameWidget is built");
 }
 
@@ -52,7 +52,7 @@ void GameWidget::timerEvent(QTimerEvent *event) {
 
 void GameWidget::updateGame() {
     Log::d("update the game ...");
-    if(state) controller->updateGame();
+    if (state) controller->updateGame();
 }
 
 // it seems that this function has no use
@@ -93,27 +93,30 @@ void GameWidget::enterGame(int id) {
     }
 }
 
-void GameWidget::changeSpeed(int interval) {}
+void GameWidget::changeSpeed(int interval) {
+    Log::d("in GameWidget receive signal in changeSpeed interval: " +
+           tStr(interval));
+    update_timer->setInterval(interval);
+}
 
 /**
  * set the speed to be ratio*(current speed)
  * if ratio is 0 then restore the speed
  */
-void GameWidget::scaleSpeed(int ratio) {
+void GameWidget::scaleSpeed(double ratio) {
     Log::d("in GameWidget receive signal in scaleSpeed ratio: " + tStr(ratio));
-    if(ratio==0) {
-        qDebug() << "the update_timer interval is restored to " << update_interval; 
+    if (ratio == 0) {
         update_timer->setInterval(update_interval);
-    }else{
-        qDebug() << "the update_timer interval is set to " << update_timer->interval()/ratio << '\n';
-        update_timer->setInterval(update_timer->interval()/ratio);
+    } else {
+        qDebug() << "the update_timer interval is set to "
+                 << update_timer->interval() / ratio << '\n';
+        update_timer->setInterval(update_timer->interval() / ratio);
     }
 }
 
 void GameWidget::keyPressEvent(QKeyEvent *event) {
     // TODO: merge if and switch condition controll
-    if (event->key() == Qt::Key_Up)
-        controller->setSnakeDirection(Snake::UP);
+    if (event->key() == Qt::Key_Up) controller->setSnakeDirection(Snake::UP);
     if (event->key() == Qt::Key_Down)
         controller->setSnakeDirection(Snake::DOWN);
     if (event->key() == Qt::Key_Right)
@@ -273,11 +276,26 @@ void GameWidget::renderSnake(QPainter *painter, int index) {
 }
 
 void GameWidget::renderFood(QPainter *painter) {
-    if (controller->foodHidden())
-        return;
+    if (controller->foodHidden()) return;
     painter->save();
     Point position = controller->getFoodPosition();
-    painter->setBrush(Qt::red);
+    switch (controller->getFoodType()) {
+        case Food::FoodTypes::Normal:
+            painter->setBrush(Qt::red);
+            break;
+        case Food::FoodTypes::Ice:
+            painter->setBrush(QColor("#B3E5FC"));  // blue
+            break;
+        case Food::FoodTypes::Fire:
+            painter->setBrush(QColor("#FF6D00"));  // orange
+            break;
+        case Food::FoodTypes::Poisoned:
+            painter->setBrush(QColor("#004D40"));  // green
+            break;
+
+        default:
+            break;
+    }
     painter->drawRect(land_x + cell * position.getX(),
                       land_y + cell * position.getY(), cell, cell);
     painter->restore();

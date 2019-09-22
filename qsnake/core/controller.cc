@@ -50,7 +50,8 @@ void Controller::updateGame() {
     }
     // food position
     Log::d("food @(" + std::to_string(food->getPosition().getX()) + ", " +
-           std::to_string(food->getPosition().getY()) + ")");
+           std::to_string(food->getPosition().getY()) +
+           ") food_t: " + str(food->getFoodType()));
     Log::d("score: " + std::to_string(score));
 }
 
@@ -70,24 +71,26 @@ void Controller::collideDetection(int index) {
         eatFood(index);  // TODO: should be renamed to clarify the object being
                          // handled
         generateFood();
-    }
-    // food effect handler:
-    auto foodType = food->getFoodType();
-    switch (foodType) {
-        case Food::FoodTypes::Ice:
-            emit scaleSpeed(0.5);
-            break;
-        default:
-            emit scaleSpeed(0);
-            break;
+
+        // food effect handler:
+        auto foodType = food->getFoodType();
+        switch (foodType) {
+            case Food::FoodTypes::Ice:
+                emit scaleSpeed(0.8);
+                break;
+            case Food::FoodTypes::Fire:
+                emit scaleSpeed(1.25);
+                break;
+            case Food::FoodTypes::Normal:
+                emit scaleSpeed(0);
+                break;
+            case Food::FoodTypes::Poisoned:
+                break;
+            default:
+                break;
+        }
     }
     // check whether the snake head meets its body
-    // debug:
-    // for (int i = 0; i < snake->getBodyVertexSize(); i++) {
-    //     Log::d("snake_vertex[" + std::to_string(i) + "]\t(" +
-    //     std::to_string(snake->getBodyVertex()[i].getX()) + "," +
-    //     std::to_string(snake->getBodyVertex()[i].getY()) + ")");
-    // }
     for (int i = 1; i < snakeList[index]->getBodyVertexSize() - 1; i++) {
         Point a = snakeList[index]->getBodyVertex()[i];
         Point b = snakeList[index]->getBodyVertex()[i + 1];
@@ -121,7 +124,7 @@ void Controller::collideDetection(int index) {
     // LEFT: (0, 0) to (0, 800) RIGHT(800, 0) to (800, 800)
     if (head_position.getX() < 0 || head_position.getX() >= cell_number ||
         head_position.getY() < 0 || head_position.getY() >= cell_number) {
-        Log::d("Hit the wall!!! The game restarted.");
+        Log::d("Hit the wall!!!");
         // restart();
     }
 }
@@ -173,6 +176,10 @@ bool Controller::foodHidden() const { return food->getHidden(); }
 bool Controller::foodExists() const { return food == NULL; }
 
 Point Controller::getFoodPosition() const { return food->getPosition(); }
+
+Food::FoodType Controller::getFoodType() const {
+    return food->getFoodType();
+}
 
 int Controller::getScore() const { return score; };
 

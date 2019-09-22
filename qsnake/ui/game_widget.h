@@ -20,7 +20,7 @@ class GameWidget : public QWidget {
     void enterGame(int id);
     void updateGame();
     void changeSpeed(int interval);
-    void scaleSpeed(int ratio);
+    void scaleSpeed(double ratio);
 
    protected:
     void paintEvent(QPaintEvent *event);

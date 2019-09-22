@@ -3,7 +3,9 @@
 #include "food.h"
 
 Food::Food() {
-    food_type = FoodTypes::Normal;
+    FoodType random_food_type = rand()%type_number;
+    // food_type = random_food_type;
+    food_type = 2;
 }
 
 Food::Food(Point position):Food() {

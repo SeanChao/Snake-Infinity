@@ -18,6 +18,7 @@ class Food {
     Point position;
     bool hidden;
     FoodType food_type;
+    const int type_number = 4;
 };
 
 #endif  // FOOD_H
