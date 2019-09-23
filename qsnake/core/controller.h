@@ -2,6 +2,7 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include "../game/brick.h"
 #include "../game/food.h"
 #include "../game/point.h"
 #include "../game/snake.h"
@@ -17,6 +18,7 @@ class Controller : public QObject {
     void setSnakeDirection(Snake::Direction d, int index = 0) const;
     Point *getSnakeVertices(int index = 0) const;
     int getSnakeVerticesSize(int index = 0) const;
+    std::vector<Point> *getBrickVertices() const;
     void eatFood(int index = 0);
 
     void generateFood(int index = 0);
@@ -40,14 +42,20 @@ class Controller : public QObject {
         const QString &type);  // use signal slot to actively update gamewindow
     void changeSpeed(int interval);
     void scaleSpeed(double ratio);
+    void gameOver();
+
+   public slots:
+    void reUpdate();
 
    private:
-    // Snake *snake;
     Snake **snakeList;  // an array to store Snake*
     Food *food;
+    Brick *brick;
+    bool updateState;
     int score;
     int cell_number;  // the number of cells in the grassland
     int mode;         // the number of players
+    void handleFoodEffect();
 };
 
 #endif  // CONTROLLER_H

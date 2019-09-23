@@ -7,6 +7,7 @@
 
 int main(int argc, char *argv[]) {
     Log::d("****** Application is running! ******");
+    srand(time(NULL));
     QApplication application(argc, argv);
     MainWindow main_window;
     main_window.show();

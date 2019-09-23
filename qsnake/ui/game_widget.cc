@@ -3,9 +3,11 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QTimer>
+#include <vector>
 #include "../game/point.h"
 #include "../log/log.h"
 
@@ -41,6 +43,7 @@ void GameWidget::paintEvent(QPaintEvent *) {
     renderLand(painter);
     renderFood(painter);
     renderSnake(painter);
+    renderBrick(painter);
 }
 
 void GameWidget::timerEvent(QTimerEvent *event) {
@@ -111,6 +114,22 @@ void GameWidget::scaleSpeed(double ratio) {
         qDebug() << "the update_timer interval is set to "
                  << update_timer->interval() / ratio << '\n';
         update_timer->setInterval(update_timer->interval() / ratio);
+    }
+}
+
+void GameWidget::popGameOver() {
+    QMessageBox msgBox;
+    msgBox.setText(tr("GAME OVER ...\nStart again?"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::Save);
+    int ret = msgBox.exec();
+    switch (ret) {
+        case QMessageBox::Yes:
+            emit reUpdate();
+            break;
+        case QMessageBox::No:
+            // TODO: return to main menu.
+            break;
     }
 }
 
@@ -187,26 +206,32 @@ void GameWidget::renderLand(QPainter *painter) {
     int grassland_width = cell * cell_number;
     land_x = (width() - grassland_width) / 2;
     land_y = height() * 0.1 + (height() * 0.9 - grassland_width) / 2;
-    // Log::d("cell: " + std::to_string(cell) + " cell_number: " +
-    // std::to_string(cell_number)); Log::d("grassland_width: " +
-    // std::to_string(grassland_width) + " lx: " + std::to_string(land_x) + "
-    // ly: " + std::to_string(land_y));
+    // Log::d("cell: " + tStr(cell) + " cell_number: " +tStr(cell_number));
+    // Log::d("grassland_width: " + tStr(grassland_width) + " lx: " +
+    // tStr(land_x) + "ly: " + tStr(land_y));
     for (int i = 0; i < cell_number; i++) {
         for (int j = 0; j < cell_number; j++) {
             if ((i + j) % 2 == 0) {
                 painter->fillRect(land_x + i * cell, land_y + j * cell, cell,
                                   cell, QColor(157, 207, 65));
-                // Log::d("draw cell E at (" + std::to_string(land_x + i *
-                // cell)+", "+ std::to_string(land_y + j * cell)+ ")");
             } else {
                 painter->fillRect(land_x + i * cell, land_y + j * cell, cell,
                                   cell, QColor(170, 215, 81));
-                // Log::d("draw cell O at (" + std::to_string(land_x + i *
-                // cell)+", "+ std::to_string(land_y + j * cell)+ ")");
             }
         }
     }
-
+    // draw the wall
+    int wall_width = 15;
+    // QColor wall_color("#c25e00");
+    QColor wall_color("#ffb74d");
+    painter->fillRect(land_x - wall_width, land_y - wall_width,
+                      grassland_width + 2 * wall_width, wall_width, wall_color);
+    painter->fillRect(land_x - wall_width, land_y + grassland_width,
+                      grassland_width + 2 * wall_width, wall_width, wall_color);
+    painter->fillRect(land_x - wall_width, land_y, wall_width, grassland_width,
+                      wall_color);
+    painter->fillRect(land_x + grassland_width, land_y, wall_width,
+                      grassland_width, wall_color);
     painter->restore();
 }
 
@@ -225,25 +250,12 @@ void GameWidget::renderSnake(QPainter *painter, int index) {
     int vertex_size = controller->getSnakeVerticesSize(index);
     // paint the snake by connecting all the vertices
     // debug:
-    // for (int i = 0; i < vertex_size; i++) {
-    //     Log::d("snake_vertex[" + std::to_string(i) + "]\t(" +
-    //     std::to_string(snake_vertex[i].getX())+","+
-    //     std::to_string(snake_vertex[i].getY())+")");
-    // }
     // special case: if the length of snake is 1:
     if (vertex_size == 1) {
         painter->drawRect(land_x + cell * snake_vertex[0].getX(),
                           land_y + cell * snake_vertex[0].getY(), cell, cell);
     } else {
         for (int i = 0; i < vertex_size - 1; ++i) {
-            // Log::d("snake_vertex[" + std::to_string(i) + "].getX()=" +
-            // std::to_string(snake_vertex[i].getX())); Log::d("snake_vertex[" +
-            // std::to_string(i + 1) + "].getX()=" +
-            // std::to_string(snake_vertex[i + 1].getX()));
-            // Log::d("snake_vertex[" + std::to_string(i) + "].getY()=" +
-            // std::to_string(snake_vertex[i].getY())); Log::d("snake_vertex[" +
-            // std::to_string(i + 1) + "].getY()=" +
-            // std::to_string(snake_vertex[i + 1].getY()));
             for (int j =
                      abs(snake_vertex[i].getX() - snake_vertex[i + 1].getX());
                  j >= 0; j -= 1) {
@@ -298,6 +310,34 @@ void GameWidget::renderFood(QPainter *painter) {
     }
     painter->drawRect(land_x + cell * position.getX(),
                       land_y + cell * position.getY(), cell, cell);
+    painter->restore();
+}
+
+void GameWidget::renderBrick(QPainter *painter) {
+    std::vector<Point> *bricks = controller->getBrickVertices();
+    auto sides = bricks->size();
+    painter->save();
+    for (int i = 0; i < sides - 1; ++i) {
+        for (int j = abs(bricks->at(i).getX() - bricks->at(i + 1).getX());
+             j >= 0; j -= 1) {
+            int left_vertex_index =
+                (bricks->at(i).getX() > bricks->at(i + 1).getX()) ? i + 1 : i;
+            painter->fillRect(
+                land_x + cell * bricks->at(left_vertex_index).getX() + j * cell,
+                land_y + cell * bricks->at(left_vertex_index).getY(), cell,
+                cell, QColor("#ffb74d"));
+        }
+        for (int k = abs(bricks->at(i).getY() - bricks->at(i + 1).getY());
+             k >= 0; k -= 1) {
+            int below_vertex_index =
+                (bricks->at(i).getY() > bricks->at(i + 1).getY()) ? i : i + 1;
+            painter->fillRect(
+                land_x + cell * bricks->at(below_vertex_index).getX(),
+                land_y + cell * bricks->at(below_vertex_index).getY() -
+                    k * cell,
+                cell, cell, QColor("#ffb74d"));
+        }
+    }
     painter->restore();
 }
 

@@ -13,6 +13,7 @@ class GameWidget : public QWidget {
     int getCellNumber() const;
 
    signals:
+    void reUpdate();
 
    public slots:
     void render();
@@ -21,6 +22,7 @@ class GameWidget : public QWidget {
     void updateGame();
     void changeSpeed(int interval);
     void scaleSpeed(double ratio);
+    void popGameOver();
 
    protected:
     void paintEvent(QPaintEvent *event);
@@ -46,6 +48,7 @@ class GameWidget : public QWidget {
     void renderSnake(QPainter *painter);
     void renderSnake(QPainter *painter, int index);
     void renderFood(QPainter *painter);
+    void renderBrick(QPainter *painter);
     void restart();
 };
 

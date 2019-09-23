@@ -1,6 +1,6 @@
 #include "controller.h"
 
-#define str std::to_string
+#define tStr std::to_string
 
 /**
  * This is the controller of the game.
@@ -10,29 +10,30 @@
  */
 Controller::Controller(int player, int cell_number)
     : cell_number(cell_number), mode(player) {
-    // snake = new Snake;
+    updateState = true;
     snakeList = new Snake*[player];
-    srand(time(NULL));
+    brick = new Brick(cell_number);
+
     for (int i = 0; i < player; i++) {
         /**
          * TODO: rebuild the Snake Constructor so that controller
          * can set the initial range of the snake head
          */
-        Log::d("time(NULL): " + str(time(NULL)));
+        Log::d("time(NULL): " + tStr(time(NULL)));
         int point_x = rand() % cell_number;
         int point_y = rand() % cell_number;
-        Log::d("the initial position of the snake is: (" + str(point_x) + ", " +
-               str(point_y) + ")");
+        Log::d("the initial position of the snake is: (" + tStr(point_x) + ", " +
+               tStr(point_y) + ")");
         Point head_point = Point(point_x, point_y);
         snakeList[i] = new Snake(&head_point);
         Log::d("snake is constructed");
     }
-    cell_number = 1;
     generateFood();
     score = 0;
 }
 
 void Controller::updateGame() {
+    if (!updateState) return;
     Log::d("----------------------------------------");
     moveSnake();
     for (int i = 0; i < mode; i++) {
@@ -51,8 +52,15 @@ void Controller::updateGame() {
     // food position
     Log::d("food @(" + std::to_string(food->getPosition().getX()) + ", " +
            std::to_string(food->getPosition().getY()) +
-           ") food_t: " + str(food->getFoodType()));
+           ") food_t: " + tStr(food->getFoodType()));
     Log::d("score: " + std::to_string(score));
+    // bricks:
+    std::vector<Point>* bricks = getBrickVertices();
+    auto sides = bricks->size();
+    for (auto i = 0; i < sides; i++) {
+        Log::d("brick @(" + tStr(bricks->at(i).getX()) + ", " +
+               tStr(bricks->at(i).getY()) + ")");
+    }
 }
 
 void Controller::moveSnake() {
@@ -70,27 +78,10 @@ void Controller::collideDetection(int index) {
         Log::d("Controller::collideDetection collide with FOOD !!!");
         eatFood(index);  // TODO: should be renamed to clarify the object being
                          // handled
+        handleFoodEffect();
         generateFood();
-
-        // food effect handler:
-        auto foodType = food->getFoodType();
-        switch (foodType) {
-            case Food::FoodTypes::Ice:
-                emit scaleSpeed(0.8);
-                break;
-            case Food::FoodTypes::Fire:
-                emit scaleSpeed(1.25);
-                break;
-            case Food::FoodTypes::Normal:
-                emit scaleSpeed(0);
-                break;
-            case Food::FoodTypes::Poisoned:
-                break;
-            default:
-                break;
-        }
     }
-    // check whether the snake head meets its body
+    // check whether the snake's head meets its body
     for (int i = 1; i < snakeList[index]->getBodyVertexSize() - 1; i++) {
         Point a = snakeList[index]->getBodyVertex()[i];
         Point b = snakeList[index]->getBodyVertex()[i + 1];
@@ -111,10 +102,12 @@ void Controller::collideDetection(int index) {
                 head_position.getX() <= b.getX()) {
                 Log::d("self collide h|1 i=" + std::to_string(i) +
                        " flag=" + std::to_string(flag));
+                emit gameOver();
             } else if (!flag && a.getX() >= head_position.getX() &&
                        head_position.getX() >= b.getX()) {
                 Log::d("self collide h|2 i=" + std::to_string(i) +
                        " flag=" + std::to_string(flag));
+                emit gameOver();
             }
         }
     }
@@ -125,13 +118,13 @@ void Controller::collideDetection(int index) {
     if (head_position.getX() < 0 || head_position.getX() >= cell_number ||
         head_position.getY() < 0 || head_position.getY() >= cell_number) {
         Log::d("Hit the wall!!!");
-        // restart();
+        updateState = false;
+        emit gameOver();
     }
 }
 
 void Controller::setSnakeDirection(Snake::Direction d, int index) const {
-    if (index >= mode)
-        return;
+    if (index >= mode) return;
     snakeList[index]->setDirection(d);
     Log::d("Controller::setSnakeDirection\tget direction: " +
            std::to_string(d));
@@ -145,6 +138,10 @@ int Controller::getSnakeVerticesSize(int index) const {
     return snakeList[index]->getBodyVertexSize();
 }
 
+std::vector<Point>* Controller::getBrickVertices() const {
+    return brick->getBrick();
+}
+
 void Controller::eatFood(int index) {
     Log::d("Controller::eatFood()");
     snakeList[index]->grow();
@@ -156,16 +153,16 @@ void Controller::eatFood(int index) {
  * Points in generateFood() is **logical**.
  */
 void Controller::generateFood(int index) {
-    Log::d("Controller::generateFood cell_number: " + str(cell_number));
-    Log::d("time(NULL): " + str(time(NULL)));
+    Log::d("Controller::generateFood cell_number: " + tStr(cell_number));
+    Log::d("time(NULL): " + tStr(time(NULL)));
     int point[2];
     do {
         for (int i = 0; i < 2; i++) {
             point[i] = rand() % cell_number;
         }
         food = new Food(Point(point[0], point[1]));
-        Log::d("Controller::generateFood in random part get: " + str(point[0]) +
-               " " + str(point[1]));
+        Log::d("Controller::generateFood in random part get: " + tStr(point[0]) +
+               " " + tStr(point[1]));
     } while (snakeList[index]->inBody(Point(point[0], point[1])));
     Log::d("Controller::generateFood() cell_number:" +
            std::to_string(cell_number));
@@ -177,9 +174,7 @@ bool Controller::foodExists() const { return food == NULL; }
 
 Point Controller::getFoodPosition() const { return food->getPosition(); }
 
-Food::FoodType Controller::getFoodType() const {
-    return food->getFoodType();
-}
+Food::FoodType Controller::getFoodType() const { return food->getFoodType(); }
 
 int Controller::getScore() const { return score; };
 
@@ -197,8 +192,31 @@ void Controller::setPlayer(int player) { this->mode = player; }
 void Controller::restart() {
     for (int i = 0; i < mode; i++) {
         Snake* old = snakeList[i];
-        snakeList[i] = new Snake;
+        snakeList[i] = new Snake;  // TODO: randomize the initial pos
         score = 0;
         delete old;
+    }
+}
+
+void Controller::reUpdate() { updateState = true;
+    restart();
+}
+
+void Controller::handleFoodEffect() {
+    auto foodType = food->getFoodType();
+    switch (foodType) {
+        case Food::FoodTypes::Ice:
+            emit scaleSpeed(0.8);
+            break;
+        case Food::FoodTypes::Fire:
+            emit scaleSpeed(1.25);
+            break;
+        case Food::FoodTypes::Normal:
+            emit scaleSpeed(0);
+            break;
+        case Food::FoodTypes::Poisoned:
+            break;
+        default:
+            break;
     }
 }

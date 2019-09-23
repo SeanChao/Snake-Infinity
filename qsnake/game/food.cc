@@ -4,8 +4,7 @@
 
 Food::Food() {
     FoodType random_food_type = rand()%type_number;
-    // food_type = random_food_type;
-    food_type = 2;
+    food_type = random_food_type;
 }
 
 Food::Food(Point position):Food() {

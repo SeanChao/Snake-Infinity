@@ -59,6 +59,9 @@ void MainWindow::createMenus() {
 void MainWindow::connectSignalSlot() {
     connect(controller, &Controller::scaleSpeed, game_widget,
             &GameWidget::scaleSpeed);
-    qDebug() << "connect done";
+    connect(controller, &Controller::gameOver, game_widget,
+            &GameWidget::popGameOver);
+    connect(game_widget, &GameWidget::reUpdate, controller,
+            &Controller::reUpdate);
     Log::d("connection is created!");
 }

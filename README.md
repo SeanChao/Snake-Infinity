@@ -1,12 +1,8 @@
 # Snake: Infinity
 🐍 Traditional game of Snake
 
-## Deadline 
-- DDL1: 7/10
-- DDL2: next semester
-
 ## Requirements
-在本项目中，你将独自实现一个贪吃蛇游戏，具体内容包括
+实现一个贪吃蛇游戏，具体内容包括
 1. 编程环境的搭建(5%)
 2. 基本功能(35%)
     1. 蛇的显示和移动
@@ -23,6 +19,5 @@
 ## Reference
 - [cppreference.com](https://zh.cppreference.com/)
 - [QT 2d Graphics with Qpainter](https://doc.qt.io/qt-5/topics-graphics.html#2d-graphics-with-qpainter)
-- [Qt Painting systems](https://doc.qt.io/qt-5/paintsystem.html)
-- [百度百科](https://baike.baidu.com/item/贪食蛇/84454)
+- [Qt Painting Systems](https://doc.qt.io/qt-5/paintsystem.html)
 - [维基百科](https://en.wikipedia.org/wiki/Snake_video_game_genre)
