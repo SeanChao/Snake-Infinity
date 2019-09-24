@@ -6,3 +6,4 @@ qsnake/test.cc
 components/
 .VSCodeCounter/
 notes.md
+*.zip

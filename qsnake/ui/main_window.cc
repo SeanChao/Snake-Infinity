@@ -2,13 +2,12 @@
 #include <QDebug>
 #include <QMenuBar>
 #include <QStackedWidget>
-#include "game_window.h"
-#include "ui/components/qtmaterialflatbutton.h"
-#include "ui/game_widget.h"
-#include "ui/welcome_widget.h"
+#include "game_widget.h"
+#include "welcome_widget.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // setFixedSize(800, 800);
+    srand(time(NULL));
     setGeometry(100, 100, 1000, 1000);  // TODO: delete this (debug)
     resize(800, 800);
 

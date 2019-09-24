@@ -4,7 +4,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QVBoxLayout>
-
+#include "../log/Log.h"
 #include "welcome_widget.h"
 
 WelcomeWidget::WelcomeWidget(QWidget *parent) : QWidget(parent) {
