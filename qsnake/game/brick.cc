@@ -33,4 +33,39 @@ Brick::Brick(int cell_number) {
 
 Brick::~Brick() {}
 
+bool Brick::inBrick(const Point& p) const{
+    int x = p.getX();
+    int y = p.getY();
+    bool in = false;
+    for (int i = 0; i < brick_point.size() - 1; i++) {
+        Point a = brick_point.at(i);
+        Point b = brick_point.at(i + 1);
+        if (a.getX() == b.getX() && x == a.getX()) {
+            bool flag = (a.getY() < b.getY()) ? true : false;
+            if (flag && a.getY() <= y && y <= b.getY()) {
+                Log::d("inBrick v|1 i=" + std::to_string(i) +
+                       " flag=" + std::to_string(flag));
+                in = true;
+            } else if (!flag && a.getY() >= y && y >= b.getY()) {
+                Log::d("inBrick v|2 i=" + std::to_string(i) +
+                       " flag=" + std::to_string(flag));
+                in = true;
+            }
+        } else if (a.getY() == b.getY() && y == a.getY()) {
+            bool flag = a.getX() < b.getX();
+            if (flag && a.getX() <= x && x <= b.getX()) {
+                Log::d("inBrick h|1 i=" + std::to_string(i) +
+                       " flag=" + std::to_string(flag));
+                in = true;
+            } else if (!flag && a.getX() >= x && x >= b.getX()) {
+                Log::d("inBrick h|2 i=" + std::to_string(i) +
+                       " flag=" + std::to_string(flag));
+                in = true;
+            }
+        }
+    }
+    // Log::d("inBrick returned " + std::to_string(in));
+    return in;
+}
+
 std::vector<Point>* Brick::getBrick() { return &brick_point; }

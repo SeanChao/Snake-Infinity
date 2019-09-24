@@ -7,11 +7,11 @@
 class Log {
    private:
     static std::string logStream;
-    static void writeToFile();
+    static void writeToFile(std::string filename = "debug.log");
 
    public:
     Log();
-    static void d(const std::string &info);
+    static void d(const std::string &info, std::string filename="debug.log");
     // static void d(char *);
     ~Log();
 };

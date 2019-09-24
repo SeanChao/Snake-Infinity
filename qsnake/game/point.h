@@ -10,6 +10,7 @@ class Point {
     int y;
 
    public:
+    enum Direction { Up, Down, Left, Right };
     Point();
     Point(int x, int y);
     ~Point();
@@ -18,6 +19,7 @@ class Point {
     void setX(int x);
     int getY() const;
     void setY(int y);
+    Point adjPoint(Direction d);
 
     bool operator==(const Point &r) const;
 };

@@ -13,24 +13,19 @@ const std::string currentDateTime() {
 
     // convert now to string form
     std::string dt = ctime(&now);
-    dt.replace(0, 4, ""); // cut the weekday
-    dt.replace(dt.length()-1, 1, ""); // cut the \n
+    dt.replace(0, 4, "");                // cut the weekday
+    dt.replace(dt.length() - 1, 1, "");  // cut the \n
     return dt;
 }
 
-void Log::d(const std::string &info) {
+void Log::d(const std::string &info, std::string filename) {
     // auto currentTime = std::chrono::system_clock::now();
     logStream += "[" + currentDateTime() + "] [debug]\t" + info + '\n';
-    writeToFile();
+    writeToFile(filename);
 }
 
-// void Log::d(char *info) {
-//     logStream += "[" + currentDateTime() + "] \t"  + info + '\n';
-//     writeToFile();
-// }
-
-void Log::writeToFile() {
-    std::ofstream fileOutPutStream("debug.log", std::ios_base::app);
+void Log::writeToFile(std::string filename) {
+    std::ofstream fileOutPutStream(filename, std::ios_base::app);
     fileOutPutStream << logStream;
     logStream.clear();
     fileOutPutStream.close();

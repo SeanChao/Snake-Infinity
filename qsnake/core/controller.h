@@ -20,22 +20,19 @@ class Controller : public QObject {
     int getSnakeVerticesSize(int index = 0) const;
     std::vector<Point> *getBrickVertices() const;
     void eatFood(int index = 0);
-
     void generateFood(int index = 0);
     bool foodHidden() const;
     bool foodExists() const;
     Point getFoodPosition() const;
-
-    void collideDetection(
-        int index = 0);  // return the point that something collides
+    void collideDetection(int index = 0);  // return the point collides with sth
     Food::FoodType getFoodType() const;
     int getScore() const;
     int getSnakeNumber() const;
     void setScore(int new_score);
     void setCellNumber(int n);
     void setPlayer(int player);
-
     void restart();
+    bool enableAi();
 
    signals:
     void updateSnake(
@@ -52,10 +49,15 @@ class Controller : public QObject {
     Food *food;
     Brick *brick;
     bool updateState;
+    bool ai_enabled;
     int score;
-    int cell_number;  // the number of cells in the grassland
-    int mode;         // the number of players
+    int cell_number;             // the number of cells in the grassland
+    int mode;                    // the number of players
+    std::vector<Point> ai_path;  // the path that AI follows
+
     void handleFoodEffect();
+    std::vector<Point> bfsFindPath();  // find the bfs path
+    Point nextPathPoint(Point &cur, int *h_dist_arr) const;
 };
 
 #endif  // CONTROLLER_H

@@ -149,6 +149,6 @@ bool Snake::inBody(const Point& p) {
             }
         }
     }
-    Log::d("inPlace returned " + std::to_string(in));
+    // Log::d("inPlace returned " + std::to_string(in));
     return in;
 }

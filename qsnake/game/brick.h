@@ -8,6 +8,7 @@ class Brick {
    public:
     Brick(int cell_number);
     ~Brick();
+    bool inBrick(const Point &p) const;
 
     std::vector<Point>* getBrick();
 };
