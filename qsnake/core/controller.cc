@@ -10,8 +10,8 @@
  * to associating with snake, food, etc and
  * convey properties of game elements to the GameWidget.
  */
-Controller::Controller(int player, int cell_number)
-    : ai_enabled(true), cell_number(cell_number), mode(player) {
+Controller::Controller(int player, int cell_number, bool ai)
+    : ai_enabled(ai), round(0), cell_number(cell_number), mode(player) {
     snakeList = new Snake*[player];
     brick = new Brick(cell_number);
 
@@ -32,7 +32,10 @@ Controller::Controller(int player, int cell_number)
     generateFood();
     score = 0;
 
-    ai_path = bfsFindPath();
+    if (ai_enabled) {
+        ai_path = bfsFindPath();
+        emit changeSpeed(100);
+    }
     Log::d("generate bfsPath done");
     updateState = true;
 }
@@ -40,9 +43,13 @@ Controller::Controller(int player, int cell_number)
 void Controller::updateGame() {
     if (!updateState) return;
     Log::d("----------------------------------------");
+    round++;
     moveSnake();
     for (int i = 0; i < mode; i++) {
         collideDetection(i);
+    }
+    if (round % 100 == 0 && !ai_enabled) {
+        brick = new Brick(cell_number);
     }
     // debug:
     // snake vertices
@@ -73,10 +80,10 @@ void Controller::moveSnake() {
         // follow AI path
         Point head = getSnakeVertices()[0];
         Point next_p;
-       
-            next_p = ai_path.at(0);
-            ai_path.erase(ai_path.begin());
-        
+
+        next_p = ai_path.at(0);
+        ai_path.erase(ai_path.begin());
+
         Log::d("remain steps: " + tStr(ai_path.size()));
         Log::d("head point should be(" + tStr(head.getX()) + ", " +
                tStr(head.getY()) + ")");
@@ -145,7 +152,7 @@ void Controller::collideDetection(int index) {
                          // handled
         handleFoodEffect();
         generateFood();
-        ai_path = bfsFindPath();
+        if (ai_enabled) ai_path = bfsFindPath();
     }
     // check whether the snake's head meets its body
     for (int i = 1; i < snakeList[index]->getBodyVertexSize() - 1; i++) {
@@ -318,7 +325,7 @@ void Controller::restart() {
     }
     generateFood();
     score = 0;
-    ai_path = bfsFindPath();
+    if (ai_enabled) ai_path = bfsFindPath();
 }
 
 void Controller::reUpdate() {

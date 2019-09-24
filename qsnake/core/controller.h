@@ -11,7 +11,7 @@
 class Controller : public QObject {
     Q_OBJECT
    public:
-    Controller(int player = 1, int cell_number = 1);
+    Controller(int player = 1, int cell_number = 1, bool ai = false);
     void updateGame();
     // Snake *getSnake();
     void moveSnake();
@@ -51,6 +51,7 @@ class Controller : public QObject {
     bool updateState;
     bool ai_enabled;
     int score;
+    int round;
     int cell_number;             // the number of cells in the grassland
     int mode;                    // the number of players
     std::vector<Point> ai_path;  // the path that AI follows

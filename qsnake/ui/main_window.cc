@@ -36,12 +36,13 @@ void MainWindow::btnNormalPressed() {
 void MainWindow::startGame(int id) {
     Log::d("MainWindow::startGame (SLOT) id: " + std::to_string(id));
     int player = id;
-    controller = new Controller(player, game_widget->getCellNumber());
+    if (id == 3) {
+        controller = new Controller(1, game_widget->getCellNumber(), true);
+        game_widget->changeSpeed(100);
+    } else
+        controller = new Controller(player, game_widget->getCellNumber());
     game_widget->bindController(controller);
-    // connect(controller, &Controller::updateSnake, game_widget,
-    // QOverload<>::of(&GameWidget::update));
     widget_stack->setCurrentIndex(1);
-
     connectSignalSlot();
 }
 

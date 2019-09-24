@@ -23,9 +23,8 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
     cell = 30;
     cell_number = height() * 0.8 / cell;
 
-    // update_timer_id = startTimer(1000);
     update_timer = new QTimer(this);
-    update_interval = 50;
+    update_interval = 800;
     update_timer->start(update_interval);
     connect(update_timer, &QTimer::timeout, this, &GameWidget::updateGame);
 
@@ -37,7 +36,6 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 }
 
 void GameWidget::paintEvent(QPaintEvent *) {
-    // Log::d("PaintEvent is called");
     QPainter *painter = new QPainter(this);
     renderBackground(painter);
     renderLand(painter);
@@ -58,16 +56,7 @@ void GameWidget::updateGame() {
     if (state) controller->updateGame();
 }
 
-// it seems that this function has no use
-void GameWidget::render() {
-    // QPainter *painter = new QPainter(this);
-    // Log::d("GameWidget::render is called");
-    // controller->updateGame();
-    // renderBackground(painter);
-    // renderLand(painter);
-    // renderFood(painter);
-    // renderSnake(painter);
-}
+void GameWidget::render() {}
 
 void GameWidget::bindController(Controller *controller) {
     this->controller = controller;
@@ -99,6 +88,7 @@ void GameWidget::enterGame(int id) {
 void GameWidget::changeSpeed(int interval) {
     Log::d("in GameWidget receive signal in changeSpeed interval: " +
            tStr(interval));
+    update_interval = interval;
     update_timer->setInterval(interval);
 }
 
