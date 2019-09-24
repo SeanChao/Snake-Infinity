@@ -29,12 +29,12 @@ Snake::~Snake() {
 
 void Snake::setDirection(Direction d) {
     // UP=0 DOWN=1 LEFT=2 RIGHT=3
-    if (direction == d)
-        return;
-    if (direction + d == 1)
-        return;  // if the snake moves UP/DOWN, but try to set to UP/DOWN
-    if (direction + d == 5)
-        return;  // as above, LEFT/RIGHT
+    if(vertex_size>1) {
+        if (direction == d) return;
+        if (direction + d == 1)
+            return;  // if the snake moves UP/DOWN, but try to set to UP/DOWN
+        if (direction + d == 5) return;  // as above, LEFT/RIGHT
+    }
     buffered_direction = d;
     Log::d("snake direction changed to"+std::to_string(d));
 }
@@ -132,19 +132,19 @@ bool Snake::inBody(const Point& p) {
         if (a.getX() == b.getX() && x == a.getX()) {
             bool flag = (a.getY() < b.getY()) ? true : false;
             if (flag && a.getY() <= y && y <= b.getY()) {
-                Log::d("inBody v|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                // Log::d("inBody v|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
                 in = true;
             } else if (!flag && a.getY() >= y && y >= b.getY()) {
-                Log::d("inBody v|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                // Log::d("inBody v|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
                 in = true;
             }
         } else if (a.getY() == b.getY() && y == a.getY()) {
             bool flag = (a.getX() < b.getX()) ? true : false;
             if (flag && a.getX() <= x && x <= b.getX()) {
-                Log::d("inBody h|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                // Log::d("inBody h|1 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
                 in = true;
             } else if (!flag && a.getX() >= x && x >= b.getX()) {
-                Log::d("inBody h|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
+                // Log::d("inBody h|2 i=" + std::to_string(i) + " flag=" + std::to_string(flag));
                 in = true;
             }
         }

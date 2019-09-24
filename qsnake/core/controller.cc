@@ -69,11 +69,17 @@ void Controller::updateGame() {
 }
 
 void Controller::moveSnake() {
-    if (ai_enabled) {
+    if (ai_enabled && !ai_path.empty()) {
         // follow AI path
         Point head = getSnakeVertices()[0];
-        Point next_p = ai_path.at(0);
-        ai_path.erase(ai_path.begin());
+        Point next_p;
+       
+            next_p = ai_path.at(0);
+            ai_path.erase(ai_path.begin());
+        
+        Log::d("remain steps: " + tStr(ai_path.size()));
+        Log::d("head point should be(" + tStr(head.getX()) + ", " +
+               tStr(head.getY()) + ")");
         Log::d("next point should be(" + tStr(next_p.getX()) + ", " +
                tStr(next_p.getY()) + ")");
         if (head.getX() == next_p.getX()) {
@@ -81,13 +87,36 @@ void Controller::moveSnake() {
             bool flag = head.getY() > next_p.getY();
             if (d == Snake::LEFT) {
                 if (flag) {
-                    snakeList[0]->setDirection(Snake::RIGHT);
-                    Log::d("turn Right");
+                    snakeList[0]->setDirection(Snake::UP);
+                    Log::d("turn Up");
                 } else {
-                    snakeList[0]->setDirection(Snake::LEFT);
-                    Log::d("turn Left");
+                    snakeList[0]->setDirection(Snake::DOWN);
+                    Log::d("turn Down");
                 }
             } else if (d == Snake::RIGHT) {
+                if (flag) {
+                    snakeList[0]->setDirection(Snake::UP);
+                    Log::d("turn Up");
+                }
+
+                else {
+                    snakeList[0]->setDirection(Snake::DOWN);
+                    Log::d("turn Down");
+                }
+            }
+        }
+        if (head.getY() == next_p.getY()) {
+            Snake::Direction d = snakeList[0]->getDirection();
+            bool flag = head.getX() > next_p.getX();
+            if (d == Snake::UP) {
+                if (flag) {
+                    snakeList[0]->setDirection(Snake::LEFT);
+                    Log::d("turn Left");
+                } else {
+                    snakeList[0]->setDirection(Snake::RIGHT);
+                    Log::d("turn Right");
+                }
+            } else if (d == Snake::DOWN) {
                 if (flag) {
                     snakeList[0]->setDirection(Snake::LEFT);
                     Log::d("turn Left");
@@ -116,6 +145,7 @@ void Controller::collideDetection(int index) {
                          // handled
         handleFoodEffect();
         generateFood();
+        ai_path = bfsFindPath();
     }
     // check whether the snake's head meets its body
     for (int i = 1; i < snakeList[index]->getBodyVertexSize() - 1; i++) {
@@ -158,6 +188,7 @@ void Controller::collideDetection(int index) {
         Log::d("Hit the wall!!!");
         updateState = false;
         emit gameOver();
+        return;
     }
     // check collide with the bricks
     std::vector<Point>* bricks = getBrickVertices();
@@ -226,7 +257,6 @@ void Controller::eatFood(int index) {
  */
 void Controller::generateFood(int index) {
     Log::d("Controller::generateFood cell_number: " + tStr(cell_number));
-    Log::d("time(NULL): " + tStr(time(NULL)));
     int point[2];
     do {
         for (int i = 0; i < 2; i++) {
@@ -288,6 +318,7 @@ void Controller::restart() {
     }
     generateFood();
     score = 0;
+    ai_path = bfsFindPath();
 }
 
 void Controller::reUpdate() {
@@ -400,11 +431,11 @@ std::vector<Point> Controller::bfsFindPath() {
     int dist_up =
         snake_head.getY() == 0
             ? 0
-            : h_dist[snake_head.getX() + snake_head.getY() * (cell_number - 1)];
-    int dist_down =
-        snake_head.getY() == cell_number - 1
-            ? 0
-            : h_dist[snake_head.getX() + snake_head.getY() * (cell_number + 1)];
+            : h_dist[snake_head.getX() + (snake_head.getY() - 1) * cell_number];
+    int dist_down = snake_head.getY() == cell_number - 1
+                        ? 0
+                        : h_dist[snake_head.getX() +
+                                 (snake_head.getY() + 1) * (cell_number)];
     int dist_left =
         snake_head.getX() == 0
             ? 0
@@ -445,16 +476,16 @@ std::vector<Point> Controller::bfsFindPath() {
     }
     Log::d("cal: pathPoints");
     do {
-        Log::d("process point (" + tStr(cur_point.getX()) + ", " +
-               tStr(cur_point.getY()) + ")");
+        // Log::d("process point (" + tStr(cur_point.getX()) + ", " +
+        //        tStr(cur_point.getY()) + ")");
         pathPoints.push_back(cur_point);
         cur_point = nextPathPoint(cur_point, h_dist);
         Log::d("get next point (" + tStr(cur_point.getX()) + ", " +
                tStr(cur_point.getY()) + ")");
     } while (h_dist[cur_point.getX() + cur_point.getY() * cell_number] != 0);
+    // pathPoints.push_back(cur_point);
+    pathPoints.push_back(getFoodPosition());
     Log::d("calculate path done");
-    pathPoints.erase(pathPoints.begin(),
-                     pathPoints.begin() + 1);  // remove the head position
     return pathPoints;
 }
 
@@ -464,7 +495,7 @@ Point Controller::nextPathPoint(Point& cur, int* h_dist_arr) const {
     if (cur_idx / cell_number != 0 &&
         h_dist_arr[cur_idx - cell_number] == h_dist_cur - 1) {
         return cur.adjPoint(Point::Up);
-    } else if (cur_idx != cell_number - 1 &&
+    } else if (cur_idx / cell_number < cell_number - 1 &&
                h_dist_arr[cur_idx + cell_number] == h_dist_cur - 1)
         return cur.adjPoint(Point::Down);
     else if (cur_idx % cell_number != 0 &&

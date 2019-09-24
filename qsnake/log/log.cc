@@ -25,6 +25,7 @@ void Log::d(const std::string &info, std::string filename) {
 }
 
 void Log::writeToFile(std::string filename) {
+    if (!enabled) return;
     std::ofstream fileOutPutStream(filename, std::ios_base::app);
     fileOutPutStream << logStream;
     logStream.clear();

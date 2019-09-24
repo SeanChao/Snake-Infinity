@@ -6,6 +6,7 @@
 
 class Log {
    private:
+    static const bool enabled = false;
     static std::string logStream;
     static void writeToFile(std::string filename = "debug.log");
 

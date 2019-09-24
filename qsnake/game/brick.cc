@@ -43,23 +43,23 @@ bool Brick::inBrick(const Point& p) const{
         if (a.getX() == b.getX() && x == a.getX()) {
             bool flag = (a.getY() < b.getY()) ? true : false;
             if (flag && a.getY() <= y && y <= b.getY()) {
-                Log::d("inBrick v|1 i=" + std::to_string(i) +
-                       " flag=" + std::to_string(flag));
+                // Log::d("inBrick v|1 i=" + std::to_string(i) +
+                //        " flag=" + std::to_string(flag));
                 in = true;
             } else if (!flag && a.getY() >= y && y >= b.getY()) {
-                Log::d("inBrick v|2 i=" + std::to_string(i) +
-                       " flag=" + std::to_string(flag));
+                // Log::d("inBrick v|2 i=" + std::to_string(i) +
+                //        " flag=" + std::to_string(flag));
                 in = true;
             }
         } else if (a.getY() == b.getY() && y == a.getY()) {
             bool flag = a.getX() < b.getX();
             if (flag && a.getX() <= x && x <= b.getX()) {
-                Log::d("inBrick h|1 i=" + std::to_string(i) +
-                       " flag=" + std::to_string(flag));
+                // Log::d("inBrick h|1 i=" + std::to_string(i) +
+                //        " flag=" + std::to_string(flag));
                 in = true;
             } else if (!flag && a.getX() >= x && x >= b.getX()) {
-                Log::d("inBrick h|2 i=" + std::to_string(i) +
-                       " flag=" + std::to_string(flag));
+                // Log::d("inBrick h|2 i=" + std::to_string(i) +
+                //        " flag=" + std::to_string(flag));
                 in = true;
             }
         }

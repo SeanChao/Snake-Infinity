@@ -25,7 +25,7 @@ GameWidget::GameWidget(QWidget *parent) : QWidget(parent) {
 
     // update_timer_id = startTimer(1000);
     update_timer = new QTimer(this);
-    update_interval = 1000;
+    update_interval = 50;
     update_timer->start(update_interval);
     connect(update_timer, &QTimer::timeout, this, &GameWidget::updateGame);
 
@@ -54,7 +54,7 @@ void GameWidget::timerEvent(QTimerEvent *event) {
 }
 
 void GameWidget::updateGame() {
-    Log::d("update the game ...");
+    // Log::d("update the game ...");
     if (state) controller->updateGame();
 }
 
