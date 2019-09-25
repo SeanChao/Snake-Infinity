@@ -22,8 +22,10 @@ Brick::Brick(int cell_number) {
             x = brick_point.at(i - 1).getX();
         }
         Log::d("create brick @(" + tStr(x) + ", " + tStr(y) + ")");
-        if (abs(x - brick_point.at(i - 1).getX()) >= 0.6 * cell_number ||
-            abs(y - brick_point.at(i - 1).getY()) >= 0.6 * cell_number)
+        double length_rate = 0.3;
+        if (abs(x - brick_point.at(i - 1).getX()) >=
+                length_rate * cell_number ||
+            abs(y - brick_point.at(i - 1).getY()) >= length_rate * cell_number)
             continue;
         else
             brick_point.push_back(Point(x, y));
@@ -33,7 +35,7 @@ Brick::Brick(int cell_number) {
 
 Brick::~Brick() {}
 
-bool Brick::inBrick(const Point& p) const{
+bool Brick::inBrick(const Point& p) const {
     int x = p.getX();
     int y = p.getY();
     bool in = false;

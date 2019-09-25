@@ -26,9 +26,9 @@ class Controller : public QObject {
     Point getFoodPosition() const;
     void collideDetection(int index = 0);  // return the point collides with sth
     Food::FoodType getFoodType() const;
-    int getScore() const;
+    int getScore(int index = 0) const;
     int getSnakeNumber() const;
-    void setScore(int new_score);
+    void setScore(int new_score, int index = 0);
     void setCellNumber(int n);
     void setPlayer(int player);
     void restart();
@@ -50,7 +50,7 @@ class Controller : public QObject {
     Brick *brick;
     bool updateState;
     bool ai_enabled;
-    int score;
+    int *score;
     int round;
     int cell_number;             // the number of cells in the grassland
     int mode;                    // the number of players

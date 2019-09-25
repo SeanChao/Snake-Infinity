@@ -123,6 +123,8 @@ void GameWidget::popGameOver() {
     }
 }
 
+void GameWidget::pause() { state = false; }
+
 void GameWidget::keyPressEvent(QKeyEvent *event) {
     // TODO: merge if and switch condition controll
     if (event->key() == Qt::Key_Up) controller->setSnakeDirection(Snake::UP);
@@ -184,9 +186,10 @@ void GameWidget::renderBackground(QPainter *painter) {
     painter->setFont(score_font);
     // Log::d("controller->getScore():" +
     // std::to_string(controller->getScore()));
+    std::string str_score = std::to_string(controller->getScore());
+    if (controller->getSnakeNumber() == 2) str_score += " vs "+std::to_string(controller->getScore(1));
     painter->drawText(icon_size + 2 * padding, statusbar_height - padding * 2,
-                      QString(QString::fromStdString(
-                          std::to_string(controller->getScore()))));
+                      QString(QString::fromStdString(str_score)));
     painter->restore();
 }
 

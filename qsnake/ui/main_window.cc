@@ -24,7 +24,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // make game core run
     connect(welcome_widget, WelcomeWidget::btnPressed, this,
             MainWindow::startGame);
+    connect(this, &MainWindow::pause, game_widget, &GameWidget::pause);
+
     setCentralWidget(widget_stack);
+
+    // setup menu bar and actions
+    action_back = new QAction("返回", this);
+    connect(action_back, &QAction::triggered, this, &MainWindow::back);
+    createMenus();
+}
+
+void MainWindow::back() {
+    emit pause();
+    widget_stack->setCurrentIndex(0);
 }
 
 void MainWindow::btnNormalPressed() {
@@ -45,11 +57,9 @@ void MainWindow::startGame(int id) {
     connectSignalSlot();
 }
 
-void MainWindow::createActions() {}
-
 void MainWindow::createMenus() {
-    //    QMenu *menu_option = menuBar()->addMenu(tr("&Options"));
-    // menu_option->addAction(action_new_game);
+    QMenu *menu_option = menuBar()->addMenu("选项");
+    menu_option->addAction(action_back);
 }
 
 /**

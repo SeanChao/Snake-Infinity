@@ -23,6 +23,7 @@ class GameWidget : public QWidget {
     void changeSpeed(int interval);
     void scaleSpeed(double ratio);
     void popGameOver();
+    void pause();
 
    protected:
     void paintEvent(QPaintEvent *event);

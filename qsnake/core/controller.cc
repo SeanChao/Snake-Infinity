@@ -30,7 +30,10 @@ Controller::Controller(int player, int cell_number, bool ai)
         Log::d("snake is constructed");
     }
     generateFood();
-    score = 0;
+    score = new int[player];
+    for (int i = 0; i < player; i++) {
+        score[i] = 0;
+    }
 
     if (ai_enabled) {
         ai_path = bfsFindPath();
@@ -65,7 +68,7 @@ void Controller::updateGame() {
     Log::d("food @(" + std::to_string(food->getPosition().getX()) + ", " +
            std::to_string(food->getPosition().getY()) +
            ") food_t: " + tStr(food->getFoodType()));
-    Log::d("score: " + std::to_string(score));
+    Log::d("score: " + std::to_string(score[0]));
     // debug: bricks
     // std::vector<Point>* bricks = getBrickVertices();
     // auto sides = bricks->size();
@@ -256,7 +259,7 @@ void Controller::eatFood(int index) {
     Log::d("Controller::eatFood()");
     snakeList[index]->grow();
     emit updateSnake(QString("SIGNAL_EAT_FOOD"));
-    score += 10;
+    score[index] += 10;
 }
 
 /**
@@ -286,11 +289,13 @@ Point Controller::getFoodPosition() const { return food->getPosition(); }
 
 Food::FoodType Controller::getFoodType() const { return food->getFoodType(); }
 
-int Controller::getScore() const { return score; };
+int Controller::getScore(int index) const { return score[index]; };
 
 int Controller::getSnakeNumber() const { return mode; }
 
-void Controller::setScore(int new_score) { score = new_score; }
+void Controller::setScore(int new_score, int index) {
+    score[index] = new_score;
+}
 
 void Controller::setCellNumber(int n) {
     cell_number = n;
@@ -303,7 +308,7 @@ void Controller::restart() {
     for (int i = 0; i < mode; i++) {
         Snake* old = snakeList[i];
         snakeList[i] = new Snake;  // TODO: randomize the initial pos
-        score = 0;
+        score[i] = 0;
         delete old;
     }
     updateState = true;
@@ -324,7 +329,6 @@ void Controller::restart() {
         Log::d("snake is constructed");
     }
     generateFood();
-    score = 0;
     if (ai_enabled) ai_path = bfsFindPath();
 }
 

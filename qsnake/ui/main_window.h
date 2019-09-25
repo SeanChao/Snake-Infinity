@@ -12,20 +12,21 @@ class MainWindow : public QMainWindow {
     explicit MainWindow(QWidget *parent = nullptr);
 
    signals:
+    void pause();
 
    public slots:
     void btnNormalPressed();
     void startGame(int id);
+    void back();
 
    private:
     Controller *controller;
     GameWidget *game_widget;
     QStackedWidget *widget_stack;
-    QAction *action_new_game;
+    QAction *action_back;
 
     void createActions();
     void createMenus();
-
     void connectSignalSlot();   
 };
 
